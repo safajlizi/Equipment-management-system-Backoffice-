@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
-import { CredenialsDto } from './dto/credenials.dto';
+import { CredentialsDto } from './dto/credentials.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtPayloadDto } from './dto/jwt-payload.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -38,7 +38,7 @@ export class AuthService {
     delete user.salt;
     return user;
   }
-  async login(credentialsDto: CredenialsDto): Promise<LoginResponeDto> {
+  async login(credentialsDto: CredentialsDto): Promise<LoginResponeDto> {
     //  Todo
     //  1- getuser by email or username
     //  1-1 ok tester le mdp
@@ -60,8 +60,6 @@ export class AuthService {
     }
     const payload: JwtPayloadDto = {
       id: user.id,
-      firstname: user.firstname,
-      lastname: user.lastname,
       username: user.username,
       email: user.email,
       role: user.role,

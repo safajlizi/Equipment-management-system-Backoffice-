@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { User } from '../users/entities/user.entity';
-import { CredenialsDto } from './dto/credenials.dto';
+import { CredentialsDto } from './dto/credentials.dto';
 import { LoginResponeDto } from './dto/login-respone.dto';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
@@ -14,7 +14,7 @@ export class AuthController {
     return this.authService.register(registerDto);
   }
   @Post('login')
-  login(@Body() credentialsDto: CredenialsDto): Promise<LoginResponeDto> {
+  login(@Body() credentialsDto: CredentialsDto): Promise<LoginResponeDto> {
     return this.authService.login(credentialsDto);
   }
 }

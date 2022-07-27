@@ -1,4 +1,4 @@
-import { Material } from 'src/material/entities/material.entity';
+import { Equipment } from 'src/equipment/entities/equipment.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum UserRoleEnum {
@@ -17,12 +17,6 @@ export class User {
   @Column({ length: 50, unique: true })
   username: string;
 
-  @Column({ length: 50 })
-  firstname: string;
-
-  @Column({ length: 50 })
-  lastname: string;
-
   @Column()
   password: string;
 
@@ -32,8 +26,8 @@ export class User {
   @Column()
   role: UserRoleEnum;
 
-  @OneToMany((type) => Material, (material) => material.manager, {
+  @OneToMany((type) => Equipment, (equipment) => equipment.manager, {
     nullable: true,
   })
-  material: Material[];
+  equipment: Equipment[];
 }
