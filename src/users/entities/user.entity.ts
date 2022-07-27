@@ -1,4 +1,5 @@
 import { Equipment } from 'src/equipment/entities/equipment.entity';
+import { History } from 'src/history/entities/history.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum UserRoleEnum {
@@ -30,4 +31,8 @@ export class User {
     nullable: true,
   })
   equipment: Equipment[];
+  @OneToMany((type) => History, (history) => history.user, {
+    nullable: true,
+  })
+  history: History[];
 }
