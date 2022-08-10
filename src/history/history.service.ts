@@ -1,26 +1,45 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Equipment } from 'src/equipment/entities/equipment.entity';
+import { Project } from 'src/project/entities/project.entity';
+import { User } from 'src/users/entities/user.entity';
+import { Repository } from 'typeorm';
 import { CreateHistoryDto } from './dto/create-history.dto';
 import { UpdateHistoryDto } from './dto/update-history.dto';
+import { History } from './entities/history.entity';
 
 @Injectable()
 export class HistoryService {
-  create(createHistoryDto: CreateHistoryDto) {
-    return 'This action adds a new history';
+  constructor(
+    @InjectRepository(History) private historyRepository: Repository<History>,
+  ) {}
+  async create(
+    createHistoryDto: CreateHistoryDto,
+    user: User,
+    equipment: Equipment,
+    project: Project,
+  ) {
+    var history = this.historyRepository.create(createHistoryDto);
+    history.date_res = new Date();
+    history.user = user;
+    history.equipment = equipment;
+    history.project = project;
+    return await this.historyRepository.save(history);
   }
 
-  findAll() {
-    return `This action returns all history`;
+  async findAll() {
+    return await this.historyRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} history`;
+  async findOne(id: string) {
+    return await this.historyRepository.findOneBy({ id: id });
   }
 
-  update(id: number, updateHistoryDto: UpdateHistoryDto) {
-    return `This action updates a #${id} history`;
+  async update(id: string, updateHistoryDto: UpdateHistoryDto) {
+    return await this.historyRepository.update(id, updateHistoryDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} history`;
+  async remove(id: string) {
+    return await this.historyRepository.delete(id);
   }
 }

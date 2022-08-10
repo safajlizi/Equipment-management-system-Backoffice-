@@ -26,9 +26,9 @@ export class AuthService {
      *  save user
      * */
 
-    let user = await this.userService.getUserByUserNameOrEmail(
-      registerDto.username,
+    let user = await this.userService.getUserByEmailOrUsername(
       registerDto.email,
+      registerDto.username,
     );
     if (user) {
       throw new UnauthorizedException('Le user existe déjà');
@@ -39,21 +39,14 @@ export class AuthService {
     return user;
   }
   async login(credentialsDto: CredentialsDto): Promise<LoginResponeDto> {
-    //  Todo
-    //  1- getuser by email or username
-    //  1-1 ok tester le mdp
-    //  1-2 ko throw error
     const { identifier, password } = credentialsDto;
-    const user = await this.userService.getUserByUserNameOrEmail(
+    const user = await this.userService.getUserByEmailOrUsername(
       identifier,
       identifier,
     );
     if (!user) {
       throw new UnauthorizedException('Veuillez vérifier vos credentials');
     }
-    //  2- compare el mot
-    //  2-1 ok return ok and user
-    //  1-2 ko throw error
     const isLoggedIn = await bcrypt.compare(password, user.password);
     if (!isLoggedIn) {
       throw new UnauthorizedException('Veuillez vérifier vos credentials');

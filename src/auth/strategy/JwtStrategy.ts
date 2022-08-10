@@ -13,9 +13,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
   async validate(payload: JwtPayloadDto) {
-    const user = await this.userService.getUserByUserNameOrEmail(
-      payload.username,
+    const user = await this.userService.getUserByEmailOrUsername(
       payload.email,
+      payload.username,
     );
     if (!user) {
       throw new UnauthorizedException('Veuillez vérifier vos credentials');

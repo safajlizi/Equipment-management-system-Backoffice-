@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { EquipmentModule } from './equipment/equipment.module';
 import { UsersModule } from './users/users.module';
 import { HistoryModule } from './history/history.module';
+import { ProjectModule } from './project/project.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { HistoryModule } from './history/history.module';
     AuthModule,
     UsersModule,
     HistoryModule,
+    ProjectModule,
   ],
   controllers: [AppController],
   providers: [AppService],

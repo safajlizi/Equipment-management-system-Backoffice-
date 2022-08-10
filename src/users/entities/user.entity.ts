@@ -1,17 +1,31 @@
 import { Equipment } from 'src/equipment/entities/equipment.entity';
 import { History } from 'src/history/entities/history.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Project } from 'src/project/entities/project.entity';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 export enum UserRoleEnum {
-  admin = 'ROLE:ADMIN',
-  user = 'ROLE:USER',
+  admin = 'ADMIN',
+  user = 'USER',
+  manager = 'MANAGER',
+}
+export function RoleToString(role: UserRoleEnum): string {
+  return UserRoleEnum[role];
 }
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+  @Column()
+  firstname: string;
+  @Column()
+  lastname: string;
   @Column({ length: 50, unique: true })
   email: string;
 
@@ -29,10 +43,18 @@ export class User {
 
   @OneToMany((type) => Equipment, (equipment) => equipment.manager, {
     nullable: true,
+    cascade: true,
   })
   equipment: Equipment[];
+  @OneToMany((type) => Project, (project) => project.manager, {
+    nullable: true,
+  })
+  managed: Project[];
+  @ManyToMany(() => Project, (project) => project.members)
+  projects: Project[];
   @OneToMany((type) => History, (history) => history.user, {
     nullable: true,
+    cascade: true,
   })
   history: History[];
 }

@@ -1,4 +1,5 @@
 import { Equipment } from 'src/equipment/entities/equipment.entity';
+import { Project } from 'src/project/entities/project.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -7,11 +8,11 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-
+export enum HistoryTypeEnum {}
 @Entity()
 export class History {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne((type) => User, (user) => user.history, {
     nullable: false,
@@ -21,11 +22,15 @@ export class History {
     nullable: false,
   })
   equipment: Equipment;
+  @ManyToOne((type) => Project, (project) => project.history, {
+    nullable: true,
+  })
+  project: Project;
   @Column()
   label: string;
   @Column()
   status: boolean;
-  @Column()
+  @Column({ nullable: true })
   defaults: string;
   @Column()
   date_res: Date;

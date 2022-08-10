@@ -12,7 +12,9 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiTags } from '@nestjs/swagger';
 @Controller('users')
+@ApiTags('User')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -29,16 +31,54 @@ export class UsersController {
   @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+    return this.usersService.findOne(id);
   }
   @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+    return this.usersService.update(id, updateUserDto);
   }
   @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+    return this.usersService.remove(id);
+  }
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('password/:id')
+  updatePassword(@Body() body, @Param('id') id: string) {
+    return this.usersService.updatePassword(
+      id,
+      body.oldpassword,
+      body.newpassword,
+    );
+  }
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('username/:id')
+  updateUsername(@Body() body, @Param('id') id: string) {
+    return this.usersService.updateUsername(id, body.username);
+  }
+
+  @Get('equipments/:id')
+  getEquips(@Param('id') id: string) {
+    return this.usersService.getEquips(id);
+  }
+  @Post('equipments/:id')
+  addEquip(
+    @Param('id') userId: string,
+    @Body('equipment') equipId: string | string[],
+  ) {
+    return this.usersService.addEquip(userId, equipId);
+  }
+  @Get('projects/managed/:id')
+  getManaged(@Param('id') id: string) {
+    return this.usersService.getManagedProjectsOfUser(id);
+  }
+  @Get('projects/member/:id')
+  getMemberProjects(@Param('id') id: string) {
+    return this.usersService.getMemberProjectsOfUser(id);
+  }
+  @Get('filter/:keyword')
+  filter(@Param('keyword') keyword: string) {
+    return this.usersService.filter(keyword);
   }
 }

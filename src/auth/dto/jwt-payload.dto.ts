@@ -1,7 +1,7 @@
 import { UserRoleEnum } from '../../users/entities/user.entity';
 
 export interface JwtPayloadDto {
-  id: number;
+  id: string;
   username: string;
   role: UserRoleEnum;
   email: string;
