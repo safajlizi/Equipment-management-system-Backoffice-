@@ -13,7 +13,16 @@ import { UpdateEquipmentDto } from './dto/update-equipment.dto';
 import { UserDecorator } from 'src/decorators/user.decorator';
 import { User } from 'src/users/entities/user.entity';
 import { CreateHistoryDto } from 'src/history/dto/create-history.dto';
-import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
+import { CreateTakeHistoryDto } from 'src/history/dto/create-take-history.dto';
+import { CreateTakesHistoryDto } from 'src/history/dto/create-takes-history.dto';
+import { CreateReturnHistoryDto } from 'src/history/dto/create-return-history.dto';
+import { CreateFaultyHistoryDto } from 'src/history/dto/create-faulty-history.dto';
 
 @Controller('equipment')
 @ApiTags('Equipment')
@@ -53,29 +62,42 @@ export class EquipmentController {
     return this.equipmentService.filter(keyword);
   }
   @Get('/measurement/all')
+  @ApiOkResponse({ description: 'Returned measurment equipment list. ' })
   getMeasurementsEquipement() {
     return this.equipmentService.getMeasurementsEquipement();
   }
   @Get('/project/:id')
+  @ApiOkResponse({
+    description: 'Returned list of equipment of given project.',
+  })
   getByProject(@Param('id') id: string) {
-    console.log(id);
     return this.equipmentService.getByProject(id);
   }
-  @Post('/project/:id')
-  affectEquipToProject(
-    @Param('id') id: string,
-    @Body('equipment') equipment: string[],
-    @UserDecorator() user: User,
-    createHistoryDto: CreateHistoryDto,
-  ) {
-    return this.equipmentService.affectEquipToProject(
-      equipment,
-      id,
-      user,
-      createHistoryDto,
-    );
+  @Post('/project/')
+  @ApiOkResponse({ description: 'Equipment affected to project.' })
+  @ApiBadRequestResponse({
+    description: 'Equipment already in use by other project.',
+  })
+  affectEquipToProject(@Body() createTake: CreateTakeHistoryDto) {
+    return this.equipmentService.affectEquipToProject(createTake);
+  }
+  @Patch('/project/')
+  @ApiOkResponse({ description: 'Equipment returned.' })
+  @ApiBadRequestResponse({
+    description: "Equipment not in project, can't be returned",
+  })
+  returnEquipFromProject(@Body() createReturn: CreateReturnHistoryDto) {
+    return this.equipmentService.returnEquipFromProject(createReturn);
+  }
+  @Post('/faulty')
+  @ApiOkResponse({ description: 'Equipment fault is declared.' })
+  declareFaulty(@Body() createFaulty: CreateFaultyHistoryDto) {
+    return this.equipmentService.declareEquipFaulty(createFaulty);
   }
   @Get('/prop_client/all')
+  @ApiOkResponse({
+    description: 'Equipment that is client property is returned.',
+  })
   getPropClient() {
     return this.equipmentService.getPropClient();
   }

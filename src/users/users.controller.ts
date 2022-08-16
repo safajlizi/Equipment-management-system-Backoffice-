@@ -81,4 +81,8 @@ export class UsersController {
   filter(@Param('keyword') keyword: string) {
     return this.usersService.filter(keyword);
   }
+  @Get('managers')
+  getManagers() {
+    return this.usersService.getManagers();
+  }
 }

@@ -1,10 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equipment } from 'src/equipment/entities/equipment.entity';
+import { EquipmentService } from 'src/equipment/equipment.service';
 import { Project } from 'src/project/entities/project.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
+import { CreateFaultyHistoryDto } from './dto/create-faulty-history.dto';
 import { CreateHistoryDto } from './dto/create-history.dto';
+import { CreateReturnHistoryDto } from './dto/create-return-history.dto';
+import { CreateTakeHistoryDto } from './dto/create-take-history.dto';
+import { CreateTakesHistoryDto } from './dto/create-takes-history.dto';
 import { UpdateHistoryDto } from './dto/update-history.dto';
 import { History } from './entities/history.entity';
 
@@ -13,17 +18,28 @@ export class HistoryService {
   constructor(
     @InjectRepository(History) private historyRepository: Repository<History>,
   ) {}
-  async create(
-    createHistoryDto: CreateHistoryDto,
-    user: User,
-    equipment: Equipment,
-    project: Project,
-  ) {
-    var history = this.historyRepository.create(createHistoryDto);
-    history.date_res = new Date();
-    history.user = user;
-    history.equipment = equipment;
-    history.project = project;
+  async createReturn(returnDto: CreateReturnHistoryDto) {
+    let history = this.historyRepository.create(returnDto);
+    return await this.historyRepository.save(history);
+  }
+  async createTake(takeDto: CreateTakeHistoryDto) {
+    let history = this.historyRepository.create(takeDto);
+    return await this.historyRepository.save(history);
+  }
+  /*async createTakes(takesDto: CreateTakesHistoryDto) {
+    let dto = new CreateTakeHistoryDto();
+    dto.date_lib = takesDto.date_lib;
+    dto.date_res = takesDto.date_res;
+    dto.description = takesDto.description;
+    dto.project = takesDto.project;
+    dto.user = takesDto.user;
+    takesDto.equipment.forEach(async (equip) => {
+      dto.equipment = await this.equipmentService.findOne(equip);
+      this.createTake(dto);
+    });
+  }*/
+  async createFault(faultDto: CreateFaultyHistoryDto) {
+    let history = this.historyRepository.create(faultDto);
     return await this.historyRepository.save(history);
   }
 

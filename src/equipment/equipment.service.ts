@@ -1,7 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNotEmpty } from 'class-validator';
+import { CreateFaultyHistoryDto } from 'src/history/dto/create-faulty-history.dto';
 import { CreateHistoryDto } from 'src/history/dto/create-history.dto';
+import { CreateReturnHistoryDto } from 'src/history/dto/create-return-history.dto';
+import { CreateTakeHistoryDto } from 'src/history/dto/create-take-history.dto';
+import { CreateTakesHistoryDto } from 'src/history/dto/create-takes-history.dto';
 import { HistoryService } from 'src/history/history.service';
 import { Project } from 'src/project/entities/project.entity';
 import { ProjectService } from 'src/project/project.service';
@@ -54,28 +58,46 @@ export class EquipmentService {
       where: [{ project: project }],
     });
   }
-  async editEquipmentProject(equipmentId: string, projectId: string) {
-    let project = await this.projectService.findOne(projectId);
-    return await this.equipmentsRepository.update(equipmentId, {
-      project: project,
+  async declareEquipFaulty(createFault: CreateFaultyHistoryDto) {
+    this.historyService.createFault(createFault);
+    this.equipmentsRepository.update(createFault.equipment, {
+      defaults: createFault.description,
+      status: EquipmentStatusEnum.faulty,
     });
   }
-  async affectEquipToProject(
-    equipmentIds: string[],
-    projectId: string,
-    user: User,
-    createHistoryDto: CreateHistoryDto,
-  ) {
-    //Affect equipment to project.
-    let project = await this.projectService.findOne(projectId);
 
-    equipmentIds.forEach(async (equipment) => {
-      let fullEquip = await this.findOne(equipment);
-      this.historyService.create(createHistoryDto, user, fullEquip, project);
-    });
-    return await this.equipmentsRepository.update(equipmentIds, {
-      project: project,
-    });
+  async affectEquipToProject(createTake: CreateTakeHistoryDto) {
+    //Affect equipment to project.
+    let equipment = await this.findOne(createTake.equipment.id);
+    if (equipment.project != null) {
+      throw new BadRequestException('Ce matériel appartient déja à un projet.');
+    } else {
+      await this.historyService.createTake(createTake);
+      return await this.equipmentsRepository
+        .createQueryBuilder()
+        .relation('project')
+        .of(createTake.equipment)
+        .update({
+          project: createTake.project,
+          status: EquipmentStatusEnum.inUse,
+        })
+        .execute();
+    }
+  }
+  async returnEquipFromProject(createReturn: CreateReturnHistoryDto) {
+    let equipment = await this.findOne(createReturn.equipment.id);
+    if (equipment.project != createReturn.project) {
+      throw new BadRequestException(
+        "Ce matériel n'apprtenait pas à ce projet!",
+      );
+    } else {
+      await this.historyService.createReturn(createReturn);
+      return await this.equipmentsRepository
+        .createQueryBuilder()
+        .relation('project')
+        .of(createReturn.equipment)
+        .remove(createReturn.project);
+    }
   }
   async getPropClient() {
     return await this.equipmentsRepository.find({
@@ -89,9 +111,9 @@ export class EquipmentService {
   }
   async getByProject(id: string) {
     return this.equipmentsRepository
-      .createQueryBuilder('e')
+      .createQueryBuilder()
       .select()
-      .where('e.project=:id', { id: id })
+      .where('projectId=:id', { id: id })
       .execute();
   }
   async getMeasurementsEquipement() {

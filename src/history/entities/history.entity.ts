@@ -3,10 +3,12 @@ import { Project } from 'src/project/entities/project.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 export enum HistoryTypeEnum {}
 @Entity()
@@ -27,15 +29,27 @@ export class History {
   })
   project: Project;
   @Column()
-  label: string;
-  @Column()
-  status: boolean;
+  action_type: string;
+  /*@Column()
+  status: boolean;*/
+  /*@Column({ nullable: true })
+  defaults: string;*/
   @Column({ nullable: true })
-  defaults: string;
-  @Column()
   date_res: Date;
-  @Column()
+  @Column({ nullable: true })
   date_lib: Date;
   @Column()
   description: string;
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
+  created_at: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+  })
+  updated_at: Date;
 }

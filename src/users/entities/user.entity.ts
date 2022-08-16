@@ -50,7 +50,7 @@ export class User {
     nullable: true,
   })
   managed: Project[];
-  @ManyToMany(() => Project, (project) => project.members)
+  @ManyToMany(() => Project, (project) => project.members, { cascade: true })
   projects: Project[];
   @OneToMany((type) => History, (history) => history.user, {
     nullable: true,

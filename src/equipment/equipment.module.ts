@@ -15,5 +15,6 @@ import { HistoryModule } from 'src/history/history.module';
   ],
   controllers: [EquipmentController],
   providers: [EquipmentService],
+  exports: [EquipmentService],
 })
 export class EquipmentModule {}

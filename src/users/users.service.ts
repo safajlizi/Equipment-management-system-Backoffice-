@@ -108,4 +108,9 @@ export class UsersService {
       ],
     });
   }
+  async getManagers() {
+    return await this.usersRepository.find({
+      where: { role: UserRoleEnum.manager },
+    });
+  }
 }
