@@ -11,6 +11,7 @@ import { HistoryService } from './history.service';
 import { CreateHistoryDto } from './dto/create-history.dto';
 import { UpdateHistoryDto } from './dto/update-history.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { Project } from 'src/project/entities/project.entity';
 
 @Controller('history')
 @ApiTags('History')

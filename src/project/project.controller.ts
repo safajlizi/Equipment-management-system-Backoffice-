@@ -112,11 +112,8 @@ export class ProjectController {
     return this.projectService.filter(keyword);
   }
 
-  @Patch('/equipment/:id')
-  @ApiOkResponse({
-    description: 'Equipment returned to project storage succesfully.',
-  })
-  removeEquipment(createReturn: CreateReturnHistoryDto) {
-    return this.projectService.removeEquipment(createReturn);
+  @Get('/history/:id')
+  getHistory(@Param('id') id: string) {
+    return this.projectService.getHistory(id);
   }
 }

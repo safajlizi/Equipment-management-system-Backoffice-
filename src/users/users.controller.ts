@@ -62,13 +62,7 @@ export class UsersController {
   getEquips(@Param('id') id: string) {
     return this.usersService.getEquips(id);
   }
-  @Post('equipments/:id')
-  addEquip(
-    @Param('id') userId: string,
-    @Body('equipment') equipId: string | string[],
-  ) {
-    return this.usersService.addEquip(userId, equipId);
-  }
+
   @Get('projects/managed/:id')
   getManaged(@Param('id') id: string) {
     return this.usersService.getManagedProjectsOfUser(id);
@@ -84,5 +78,10 @@ export class UsersController {
   @Get('managers')
   getManagers() {
     return this.usersService.getManagers();
+  }
+
+  @Get('/history/:id')
+  getHistory(@Param('id') id: string) {
+    return this.usersService.getHistory(id);
   }
 }

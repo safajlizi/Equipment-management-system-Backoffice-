@@ -112,4 +112,11 @@ export class ProjectService {
       .of(createReturn.project.id)
       .remove(createReturn.equipment.id);
   }
+  async getHistory(id: string) {
+    return await this.projectRepository
+      .createQueryBuilder()
+      .relation('history')
+      .of(id)
+      .loadMany();
+  }
 }

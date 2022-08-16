@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNotEmpty } from 'class-validator';
 import { CreateFaultyHistoryDto } from 'src/history/dto/create-faulty-history.dto';
@@ -67,37 +71,107 @@ export class EquipmentService {
   }
 
   async affectEquipToProject(createTake: CreateTakeHistoryDto) {
-    //Affect equipment to project.
+    //Affect equipment to project, this is done by a manager.
     let equipment = await this.findOne(createTake.equipment.id);
     if (equipment.project != null) {
       throw new BadRequestException('Ce matériel appartient déja à un projet.');
     } else {
       await this.historyService.createTake(createTake);
-      return await this.equipmentsRepository
+      await this.equipmentsRepository
         .createQueryBuilder()
         .relation('project')
-        .of(createTake.equipment)
-        .update({
-          project: createTake.project,
-          status: EquipmentStatusEnum.inUse,
+        .of(equipment)
+        .set(createTake.project);
+      await this.equipmentsRepository
+        .createQueryBuilder()
+        .relation('manager')
+        .of(equipment)
+        .set(createTake.project.manager);
+      return await this.equipmentsRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          status: EquipmentStatusEnum.availableToProject,
         })
+        .where('id = :id', { id: equipment.id })
         .execute();
     }
   }
   async returnEquipFromProject(createReturn: CreateReturnHistoryDto) {
-    let equipment = await this.findOne(createReturn.equipment.id);
-    if (equipment.project != createReturn.project) {
+    //Returns equipment to global storage and out of project jurisdiction, this is done by manager.
+    let project = await this.equipmentsRepository
+      .createQueryBuilder()
+      .relation('project')
+      .of(createReturn.equipment)
+      .loadOne();
+    if (project.id != createReturn.project) {
       throw new BadRequestException(
-        "Ce matériel n'apprtenait pas à ce projet!",
+        "Ce matériel n'appartient pas à ce projet!",
       );
     } else {
       await this.historyService.createReturn(createReturn);
-      return await this.equipmentsRepository
+      let equipment = await this.findOne(createReturn.equipment.id);
+      await this.equipmentsRepository
         .createQueryBuilder()
         .relation('project')
-        .of(createReturn.equipment)
-        .remove(createReturn.project);
+        .of(equipment)
+        .set(null);
+      await this.equipmentsRepository
+        .createQueryBuilder()
+        .relation('manager')
+        .of(equipment)
+        .set(null);
+      return await this.equipmentsRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          status: EquipmentStatusEnum.availableToAll,
+        })
+        .where('id = :id', { id: equipment.id })
+        .execute();
     }
+  }
+  async affectEquipToUserProject(createTakeUser: CreateTakeHistoryDto) {
+    let members = this.projectService.getMembers(createTakeUser.project.id);
+    if ((await members).includes(createTakeUser.user)) {
+      let equipment = await this.equipmentsRepository.findOneBy({
+        id: createTakeUser.equipment.id,
+      });
+      await this.historyService.createTake(createTakeUser);
+      await this.equipmentsRepository
+        .createQueryBuilder()
+        .relation('manager')
+        .of(equipment)
+        .set(createTakeUser.user);
+      return this.equipmentsRepository
+        .createQueryBuilder()
+        .update()
+        .set({ status: EquipmentStatusEnum.InUseToProject })
+        .where('id = :id', { id: equipment.id })
+        .execute();
+    } else
+      throw new UnauthorizedException('You are not a member of this project.');
+  }
+  async removeEquipToUserProject(createReturnUser: CreateReturnHistoryDto) {
+    let members = this.projectService.getMembers(createReturnUser.project.id);
+    if ((await members).includes(createReturnUser.user)) {
+      let equipment = await this.equipmentsRepository.findOneBy({
+        id: createReturnUser.equipment.id,
+      });
+      await this.historyService.createReturn(createReturnUser);
+      await this.equipmentsRepository
+        .createQueryBuilder()
+        .relation('manager')
+        .of(equipment)
+        .set(createReturnUser.project.manager);
+      return await this.equipmentsRepository
+        .createQueryBuilder()
+        .update()
+        .set({ status: EquipmentStatusEnum.availableToProject })
+        .where('id = :id', { id: equipment.id })
+        .execute();
+    } else
+      throw new UnauthorizedException('You are not a member of this project.');
   }
   async getPropClient() {
     return await this.equipmentsRepository.find({
@@ -120,5 +194,20 @@ export class EquipmentService {
     return await this.equipmentsRepository.find({
       where: { is_calibrated: false || true },
     });
+  }
+
+  async getHistory(id: string) {
+    return await this.equipmentsRepository
+      .createQueryBuilder()
+      .relation('history')
+      .of(id)
+      .loadMany();
+  }
+  async getCategories() {
+    return await this.equipmentsRepository
+      .createQueryBuilder()
+      .select('category')
+      .distinct()
+      .execute();
   }
 }

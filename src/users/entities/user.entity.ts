@@ -38,7 +38,7 @@ export class User {
   @Column()
   salt: string;
 
-  @Column()
+  @Column({ default: UserRoleEnum.user })
   role: UserRoleEnum;
 
   @OneToMany((type) => Equipment, (equipment) => equipment.manager, {
@@ -50,11 +50,13 @@ export class User {
     nullable: true,
   })
   managed: Project[];
-  @ManyToMany(() => Project, (project) => project.members, { cascade: true })
+  @ManyToMany(() => Project, (project) => project.members)
   projects: Project[];
   @OneToMany((type) => History, (history) => history.user, {
     nullable: true,
     cascade: true,
   })
   history: History[];
+  @OneToMany((type) => Equipment, (equip) => equip.created_by)
+  created: Equipment[];
 }

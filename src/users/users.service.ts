@@ -113,4 +113,11 @@ export class UsersService {
       where: { role: UserRoleEnum.manager },
     });
   }
+  async getHistory(id: string) {
+    return await this.usersRepository
+      .createQueryBuilder()
+      .relation('history')
+      .of(id)
+      .loadMany();
+  }
 }

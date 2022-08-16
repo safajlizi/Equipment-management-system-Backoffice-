@@ -15,10 +15,12 @@ import { Type } from 'class-transformer';
 import { Project } from 'src/project/entities/project.entity';
 
 export enum EquipmentStatusEnum {
-  available = 'AVAILABLE',
-  inUse = 'INUSE',
+  availableToAll = 'AVAILABLETOALL',
+  availableToProject = 'AVAILABLETOPROJECT',
+  InUseToProject = 'INUSETOPROJECT',
+  InUseToOthers = 'INUSETOOTHERS',
   faulty = 'FAULTY',
-  notCalibrated = 'NOTCALIBRATED',
+  calibrationNeeded = 'CALIBRATIONNEEDED',
 }
 
 @Entity()
@@ -49,6 +51,8 @@ export class Equipment {
   status: EquipmentStatusEnum;
   @Column({ nullable: true })
   defaults: string;
+  @Column()
+  category: string;
   @Column({ type: 'timestamp', nullable: true })
   date_res: Date;
   @Column({ type: 'timestamp', nullable: true })
@@ -57,9 +61,10 @@ export class Equipment {
   description: string;
   @OneToMany((type) => History, (history) => history.equipment, {
     nullable: true,
-    cascade: true,
   })
   history: History[];
+  @OneToMany((type) => User, (user) => user.created)
+  created_by: User;
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
