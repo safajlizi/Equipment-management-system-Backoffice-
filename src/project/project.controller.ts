@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -66,7 +67,7 @@ export class ProjectController {
     return this.projectService.getMembers(id);
   }
 
-  @Patch('/members/:id')
+  @Put('/members/:id')
   @ApiOkResponse({
     description:
       'Member or members whose ids were given have been added to project with id given in params.',
@@ -95,7 +96,7 @@ export class ProjectController {
     return this.projectService.remove(id);
   }
 
-  @Delete('/members/:id')
+  @Patch('/members/:id')
   @ApiOkResponse({ description: 'Removed member from project member list.' })
   @ApiNotFoundResponse({
     description: 'Project or user to be removed not found',
@@ -111,9 +112,8 @@ export class ProjectController {
   filter(@Param('keyword') keyword: string) {
     return this.projectService.filter(keyword);
   }
-
-  @Get('/history/:id')
-  getHistory(@Param('id') id: string) {
-    return this.projectService.getHistory(id);
+  @Get('/user/:id')
+  getProjectsUser(memberId: string) {
+    return this.projectService.getProjectsOfUser(memberId);
   }
 }

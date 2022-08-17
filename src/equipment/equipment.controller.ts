@@ -136,10 +136,6 @@ export class EquipmentController {
     return this.equipmentService.removeEquipToUserProject(createReturnUser);
   }
 
-  @Get('/history/:id')
-  getHistory(@Param('id') id: string) {
-    return this.equipmentService.getHistory(id);
-  }
   @Get('/categories')
   getCategories() {
     return this.equipmentService.getCategories();

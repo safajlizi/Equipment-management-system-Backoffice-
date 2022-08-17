@@ -22,10 +22,13 @@ export function RoleToString(role: UserRoleEnum): string {
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
   @Column()
   firstname: string;
+
   @Column()
   lastname: string;
+
   @Column({ length: 50, unique: true })
   email: string;
 
@@ -46,17 +49,21 @@ export class User {
     cascade: true,
   })
   equipment: Equipment[];
+
   @OneToMany((type) => Project, (project) => project.manager, {
     nullable: true,
   })
   managed: Project[];
+
   @ManyToMany(() => Project, (project) => project.members)
   projects: Project[];
+
   @OneToMany((type) => History, (history) => history.user, {
     nullable: true,
     cascade: true,
   })
   history: History[];
+
   @OneToMany((type) => Equipment, (equip) => equip.created_by)
   created: Equipment[];
 }

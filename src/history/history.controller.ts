@@ -42,4 +42,18 @@ export class HistoryController {
   remove(@Param('id') id: string) {
     return this.historyService.remove(id);
   }
+
+  @Get('user/:id')
+  getUserHistory(@Param('id') userId: string) {
+    return this.historyService.getUserHistory(userId);
+  }
+
+  @Get('project/:id')
+  getProjectHistory(@Param('id') projectId: string) {
+    return this.historyService.getProjectHistory(projectId);
+  }
+  @Get('equipment/:id')
+  getEquipmentHistory(@Param('id') equipmentId: string) {
+    return this.historyService.getEquipmentHistory(equipmentId);
+  }
 }

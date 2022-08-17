@@ -99,12 +99,20 @@ export class ProjectService {
   }
 
   async filter(keyword: string) {
-    return await this.projectRepository.find({
+    /*({
       where: [
         { name: Like(`%${keyword}%`) },
         { manager: Like(`%${keyword}%`) },
       ],
-    });
+    });*/
+    console.log(keyword);
+    return await this.projectRepository
+      .createQueryBuilder('project')
+      .leftJoinAndSelect('project.manager', 'user')
+      .where('name like :keyword', { keyword: `%${keyword}%` })
+      .orWhere('user.firstname like :keyword', { keyword: `%${keyword}%` })
+      .orWhere('user.lastname like :keyword', { keyword: `%${keyword}%` })
+      .getMany();
   }
 
   async removeEquipment(createReturn: CreateReturnHistoryDto) {
@@ -115,11 +123,13 @@ export class ProjectService {
       .of(createReturn.project.id)
       .remove(createReturn.equipment.id);
   }
-  async getHistory(id: string) {
+  async getProjectsOfUser(memberId: string) {
     return await this.projectRepository
-      .createQueryBuilder()
-      .relation('history')
-      .of(id)
-      .loadMany();
+      .createQueryBuilder('project')
+      .leftJoinAndSelect('project.members', 'user', 'user.id = :userId', {
+        userId: memberId,
+      })
+      .leftJoinAndSelect('project.manager', 'users')
+      .getManyAndCount();
   }
 }
