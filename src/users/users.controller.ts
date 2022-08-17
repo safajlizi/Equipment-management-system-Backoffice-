@@ -43,6 +43,10 @@ export class UsersController {
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }
+  @Get('managers/all')
+  getManagers() {
+    return this.usersService.getManagers();
+  }
   @UseGuards(AuthGuard('jwt'))
   @Patch('password/:id')
   updatePassword(@Body() body, @Param('id') id: string) {
@@ -74,10 +78,6 @@ export class UsersController {
   @Get('filter/:keyword')
   filter(@Param('keyword') keyword: string) {
     return this.usersService.filter(keyword);
-  }
-  @Get('managers')
-  getManagers() {
-    return this.usersService.getManagers();
   }
 
   @Get('/history/:id')

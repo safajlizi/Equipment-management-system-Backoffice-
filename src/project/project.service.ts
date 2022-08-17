@@ -38,7 +38,10 @@ export class ProjectService {
   }
 
   async findAll() {
-    return await this.projectRepository.find();
+    return await this.projectRepository
+      .createQueryBuilder('project')
+      .leftJoinAndSelect('project.manager', 'user')
+      .getMany();
   }
 
   async findOne(id: string) {
