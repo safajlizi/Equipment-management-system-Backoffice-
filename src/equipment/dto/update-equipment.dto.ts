@@ -8,6 +8,10 @@ import {
   MaxLength,
 } from 'class-validator';
 import { IsNullable } from 'src/decorators/isnull.decorator';
+import {
+  EquipmentCalibrationEnum,
+  EquipmentPropertyEnum,
+} from '../entities/equipment.entity';
 import { CreateEquipmentDto } from './create-equipment.dto';
 
 export class UpdateEquipmentDto extends PartialType(CreateEquipmentDto) {
@@ -15,7 +19,7 @@ export class UpdateEquipmentDto extends PartialType(CreateEquipmentDto) {
   @MaxLength(255)
   label?: string;
   @IsBoolean()
-  prop_client?: boolean;
+  property?: EquipmentPropertyEnum;
   @IsString()
   @IsNullable()
   defaults?: string;
@@ -23,8 +27,6 @@ export class UpdateEquipmentDto extends PartialType(CreateEquipmentDto) {
   description?: string;
   @Type(() => Date)
   @IsDate()
-  calibrating_date?: Date;
-  @IsBoolean()
-  @Transform(({ value }) => (value === 'true' ? true : false))
-  is_calibrated?: boolean;
+  validity_date?: Date;
+  cailbration: EquipmentCalibrationEnum;
 }

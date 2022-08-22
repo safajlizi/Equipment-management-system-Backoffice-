@@ -17,7 +17,13 @@ import { User } from 'src/users/entities/user.entity';
 import { Like, Repository } from 'typeorm';
 import { CreateEquipmentDto } from './dto/create-equipment.dto';
 import { UpdateEquipmentDto } from './dto/update-equipment.dto';
-import { Equipment, EquipmentStatusEnum } from './entities/equipment.entity';
+import {
+  Equipment,
+  EquipmentCalibrationEnum,
+  EquipmentConformityEnum,
+  EquipmentPropertyEnum,
+  EquipmentStatusEnum,
+} from './entities/equipment.entity';
 
 @Injectable()
 export class EquipmentService {
@@ -29,7 +35,12 @@ export class EquipmentService {
   ) {}
   async create(createEquipmentDto: CreateEquipmentDto) {
     var equipment = this.equipmentsRepository.create(createEquipmentDto);
-    //equipment.ref = HERE WRITE LOGIC OF REF DETERMINATION
+    let count = (
+      await this.equipmentsRepository.findAndCountBy({
+        category: createEquipmentDto.category,
+      })
+    )[1];
+    equipment.ref = `${createEquipmentDto.category}_M${count}`;
     return await this.equipmentsRepository.save(equipment);
   }
 
@@ -66,7 +77,7 @@ export class EquipmentService {
     this.historyService.createFault(createFault);
     this.equipmentsRepository.update(createFault.equipment, {
       defaults: createFault.description,
-      status: EquipmentStatusEnum.faulty,
+      conformity: EquipmentConformityEnum.notcompliant,
     });
   }
 
@@ -91,7 +102,7 @@ export class EquipmentService {
         .createQueryBuilder()
         .update()
         .set({
-          status: EquipmentStatusEnum.availableToProject,
+          availability: EquipmentStatusEnum.InUseToOthers,
         })
         .where('id = :id', { id: equipment.id })
         .execute();
@@ -125,7 +136,7 @@ export class EquipmentService {
         .createQueryBuilder()
         .update()
         .set({
-          status: EquipmentStatusEnum.availableToAll,
+          availability: EquipmentStatusEnum.availableToAll,
         })
         .where('id = :id', { id: equipment.id })
         .execute();
@@ -146,7 +157,7 @@ export class EquipmentService {
       return this.equipmentsRepository
         .createQueryBuilder()
         .update()
-        .set({ status: EquipmentStatusEnum.InUseToProject })
+        .set({ availability: EquipmentStatusEnum.InUseToProject })
         .where('id = :id', { id: equipment.id })
         .execute();
     } else
@@ -167,7 +178,7 @@ export class EquipmentService {
       return await this.equipmentsRepository
         .createQueryBuilder()
         .update()
-        .set({ status: EquipmentStatusEnum.availableToProject })
+        .set({ availability: EquipmentStatusEnum.InUseToOthers })
         .where('id = :id', { id: equipment.id })
         .execute();
     } else
@@ -175,12 +186,12 @@ export class EquipmentService {
   }
   async getPropClient() {
     return await this.equipmentsRepository.find({
-      where: { prop_client: true },
+      where: { property: EquipmentPropertyEnum.client },
     });
   }
   async getByStatus(status: EquipmentStatusEnum) {
     return await this.equipmentsRepository.find({
-      where: { status: status },
+      where: { availability: status },
     });
   }
   async getByProject(id: string) {
@@ -192,7 +203,10 @@ export class EquipmentService {
   }
   async getMeasurementsEquipement() {
     return await this.equipmentsRepository.find({
-      where: { is_calibrated: false || true },
+      where: [
+        { calibration: EquipmentCalibrationEnum.ok },
+        { calibration: EquipmentCalibrationEnum.nok },
+      ],
     });
   }
 

@@ -16,21 +16,29 @@ import { Project } from 'src/project/entities/project.entity';
 
 export enum EquipmentStatusEnum {
   availableToAll = 'AVAILABLETOALL',
-  availableToProject = 'AVAILABLETOPROJECT',
   InUseToProject = 'INUSETOPROJECT',
   InUseToOthers = 'INUSETOOTHERS',
-  faulty = 'FAULTY',
-  calibrationNeeded = 'CALIBRATIONNEEDED',
 }
-
+export enum EquipmentPropertyEnum {
+  client = 'Client',
+  sofia = 'Sofia',
+}
+export enum EquipmentConformityEnum {
+  compliant = 'Compliant',
+  notcompliant = 'Not Compliant',
+}
+export enum EquipmentCalibrationEnum {
+  ok = 'Calibrated',
+  nok = 'Not Calibrated',
+  na = 'Not available',
+}
 @Entity()
 export class Equipment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  /*
-  @PrimaryColumn()
-  ref: string;*/
 
+  @Column()
+  ref: string;
   @ManyToOne((type) => User, (user) => user.equipment, {
     nullable: true,
   })
@@ -39,16 +47,18 @@ export class Equipment {
     cascade: true,
   })
   project: Project;
-  @Column()
-  prop_client: boolean;
+  @Column({ default: EquipmentPropertyEnum.sofia })
+  property: EquipmentPropertyEnum;
   @Column({ type: 'date', nullable: true })
-  calibrating_date: Date;
-  @Column({ nullable: true, default: null })
-  is_calibrated: boolean;
+  validity_date: Date;
+  @Column({ nullable: true, default: EquipmentConformityEnum.compliant })
+  conformity: EquipmentConformityEnum;
+  @Column({ default: EquipmentCalibrationEnum.na })
+  calibration: EquipmentCalibrationEnum;
   @Column()
   label: string;
-  @Column()
-  status: EquipmentStatusEnum;
+  @Column({ default: EquipmentStatusEnum.availableToAll })
+  availability: EquipmentStatusEnum;
   @Column({ nullable: true })
   defaults: string;
   @Column()
