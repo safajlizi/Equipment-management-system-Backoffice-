@@ -58,4 +58,28 @@ export class HistoryService {
   async remove(id: string) {
     return await this.historyRepository.delete(id);
   }
+  async getUserHistory(userId: string) {
+    return await this.historyRepository
+      .createQueryBuilder('history')
+      .leftJoinAndSelect('history.equipment', 'equipment')
+      .leftJoinAndSelect('history.project', 'project')
+      .where('history.user = :id', { id: userId })
+      .getMany();
+  }
+  async getProjectHistory(projectId: string) {
+    return await this.historyRepository
+      .createQueryBuilder('history')
+      .leftJoinAndSelect('history.equipment', 'equipment')
+      .leftJoinAndSelect('history.user', 'user')
+      .where('history.project = :id', { id: projectId })
+      .getMany();
+  }
+  async getEquipmentHistory(equipmentId: string) {
+    return await this.historyRepository
+      .createQueryBuilder('history')
+      .leftJoinAndSelect('history.user', 'user')
+      .leftJoinAndSelect('history.project', 'project')
+      .where('history.equipment = :id', { id: equipmentId })
+      .getMany();
+  }
 }

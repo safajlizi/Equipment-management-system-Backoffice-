@@ -196,13 +196,6 @@ export class EquipmentService {
     });
   }
 
-  async getHistory(id: string) {
-    return await this.equipmentsRepository
-      .createQueryBuilder()
-      .relation('history')
-      .of(id)
-      .loadMany();
-  }
   async getCategories() {
     return await this.equipmentsRepository
       .createQueryBuilder()

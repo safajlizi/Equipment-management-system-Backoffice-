@@ -10,7 +10,6 @@ async function bootstrap() {
     .setTitle('Equipment management application API')
     .setDescription('API that enables full functionality of application')
     .setVersion('1.0')
-    .addTag('equipment')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

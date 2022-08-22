@@ -91,13 +91,7 @@ export class UsersService {
       .of(id)
       .loadMany();
   }
-  async getMemberProjectsOfUser(id: string) {
-    return await this.usersRepository
-      .createQueryBuilder('users')
-      .relation('projects')
-      .of(id)
-      .loadMany();
-  }
+
   async filter(keyword: string) {
     return await this.usersRepository.find({
       where: [
@@ -112,12 +106,5 @@ export class UsersService {
     return await this.usersRepository.find({
       where: { role: UserRoleEnum.manager },
     });
-  }
-  async getHistory(id: string) {
-    return await this.usersRepository
-      .createQueryBuilder()
-      .relation('history')
-      .of(id)
-      .loadMany();
   }
 }

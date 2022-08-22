@@ -112,9 +112,8 @@ export class ProjectController {
   filter(@Param('keyword') keyword: string) {
     return this.projectService.filter(keyword);
   }
-
-  @Get('/history/:id')
-  getHistory(@Param('id') id: string) {
-    return this.projectService.getHistory(id);
+  @Get('/user/:id')
+  getProjectsUser(memberId: string) {
+    return this.projectService.getProjectsOfUser(memberId);
   }
 }
