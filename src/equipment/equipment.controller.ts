@@ -120,7 +120,7 @@ export class EquipmentController {
   @ApiUnauthorizedResponse({
     description: "User requesting isn't member of project.",
   })
-  @Post('/project/user/')
+  @Post('/project/user/take')
   affectEquipToProjectUser(createTakeUser: CreateTakeHistoryDto) {
     return this.equipmentService.affectEquipToUserProject(createTakeUser);
   }
@@ -131,7 +131,7 @@ export class EquipmentController {
   @ApiUnauthorizedResponse({
     description: "User requesting isn't member of project.",
   })
-  @Patch('/project/user')
+  @Patch('/project/user/return')
   returnEquipFromProjectUser(createReturnUser: CreateReturnHistoryDto) {
     return this.equipmentService.removeEquipToUserProject(createReturnUser);
   }
