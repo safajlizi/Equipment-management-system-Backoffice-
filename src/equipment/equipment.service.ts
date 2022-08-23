@@ -153,6 +153,7 @@ export class EquipmentService {
         .execute();
     }
   }
+
   async affectEquipToUserProject(createTakeUser: CreateTakeHistoryDto) {
     let members = await this.projectService.getMembers(
       createTakeUser.project as unknown as string,
@@ -177,6 +178,7 @@ export class EquipmentService {
     } else
       throw new UnauthorizedException('You are not a member of this project.');
   }
+
   async removeEquipToUserProject(createReturnUser: CreateReturnHistoryDto) {
     let members = await this.projectService.getMembers(
       createReturnUser.project as unknown as string,
