@@ -17,5 +17,5 @@ export class CreateTakeHistoryDto {
   description: string;
   @Type(() => Date)
   date_lib: Date;
-  date_res: Date = new Date();
+  date_res?: Date = new Date();
 }

@@ -45,7 +45,12 @@ export class ProjectService {
   }
 
   async findOne(id: string) {
-    return await this.projectRepository.findOneBy({ id: id });
+    return await this.projectRepository
+      .createQueryBuilder('project')
+      .select()
+      .where('project.id = :id', { id: id })
+      .leftJoinAndSelect('project.manager', 'user')
+      .getOne();
   }
 
   /*
