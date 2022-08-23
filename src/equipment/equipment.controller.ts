@@ -121,7 +121,7 @@ export class EquipmentController {
     description: "User requesting isn't member of project.",
   })
   @Post('/project/user/take')
-  affectEquipToProjectUser(createTakeUser: CreateTakeHistoryDto) {
+  affectEquipToProjectUser(@Body() createTakeUser: CreateTakeHistoryDto) {
     return this.equipmentService.affectEquipToUserProject(createTakeUser);
   }
 
@@ -132,7 +132,7 @@ export class EquipmentController {
     description: "User requesting isn't member of project.",
   })
   @Patch('/project/user/return')
-  returnEquipFromProjectUser(createReturnUser: CreateReturnHistoryDto) {
+  returnEquipFromProjectUser(@Body() createReturnUser: CreateReturnHistoryDto) {
     return this.equipmentService.removeEquipToUserProject(createReturnUser);
   }
 

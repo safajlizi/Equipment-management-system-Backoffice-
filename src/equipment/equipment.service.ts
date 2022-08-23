@@ -53,7 +53,12 @@ export class EquipmentService {
   }
 
   async findOne(id: string) {
-    return await this.equipmentsRepository.findOneBy({ id: id });
+    return await this.equipmentsRepository
+      .createQueryBuilder('equip')
+      .select()
+      .where('equip.id = :id', { id: id })
+      .leftJoinAndSelect('equip.manager', 'user')
+      .getOne();
   }
 
   async update(id: string, updateEquipmentDto: UpdateEquipmentDto) {
@@ -149,10 +154,11 @@ export class EquipmentService {
     }
   }
   async affectEquipToUserProject(createTakeUser: CreateTakeHistoryDto) {
-    let members = this.projectService.getMembers(
+    let members = await this.projectService.getMembers(
       createTakeUser.project as unknown as string,
     );
-    if ((await members).includes(createTakeUser.user)) {
+    let memberIds = members.map((element) => element.id);
+    if (memberIds.includes(createTakeUser.user)) {
       let equipment = await this.equipmentsRepository.findOneBy({
         id: createTakeUser.equipment as unknown as string,
       });
@@ -172,28 +178,38 @@ export class EquipmentService {
       throw new UnauthorizedException('You are not a member of this project.');
   }
   async removeEquipToUserProject(createReturnUser: CreateReturnHistoryDto) {
-    let members = this.projectService.getMembers(
+    let members = await this.projectService.getMembers(
       createReturnUser.project as unknown as string,
     );
     let project = await this.projectService.findOne(
       createReturnUser.project as unknown as string,
     );
-    if ((await members).includes(createReturnUser.user)) {
-      let equipment = await this.equipmentsRepository.findOneBy({
-        id: createReturnUser.equipment as unknown as string,
-      });
-      await this.historyService.createReturn(createReturnUser);
-      await this.equipmentsRepository
-        .createQueryBuilder()
-        .relation('manager')
-        .of(equipment)
-        .set(project.manager);
-      return await this.equipmentsRepository
-        .createQueryBuilder()
-        .update()
-        .set({ availability: EquipmentStatusEnum.InUseToOthers })
-        .where('id = :id', { id: equipment.id })
-        .execute();
+    let memberIds = members.map((element) => element.id);
+    if (memberIds.includes(createReturnUser.user)) {
+      let equipment = await this.findOne(
+        createReturnUser.equipment as unknown as string,
+      );
+      if (
+        !equipment.manager ||
+        equipment.manager.id != (createReturnUser.user as unknown as string)
+      ) {
+        throw new UnauthorizedException(
+          'Vous ne possédez pas cet équipement pour le retourner.',
+        );
+      } else {
+        await this.historyService.createReturn(createReturnUser);
+        await this.equipmentsRepository
+          .createQueryBuilder()
+          .relation('manager')
+          .of(equipment)
+          .set(project.manager);
+        return await this.equipmentsRepository
+          .createQueryBuilder()
+          .update()
+          .set({ availability: EquipmentStatusEnum.InUseToOthers })
+          .where('id = :id', { id: equipment.id })
+          .execute();
+      }
     } else
       throw new UnauthorizedException('You are not a member of this project.');
   }
