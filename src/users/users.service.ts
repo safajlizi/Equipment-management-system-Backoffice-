@@ -91,6 +91,13 @@ export class UsersService {
       .of(id)
       .loadMany();
   }
+  async getMemberProjectsOfUser(id: string) {
+    return await this.usersRepository
+      .createQueryBuilder()
+      .relation('projects')
+      .of(id)
+      .loadMany();
+  }
 
   async filter(keyword: string) {
     return await this.usersRepository.find({

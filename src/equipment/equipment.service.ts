@@ -45,7 +45,11 @@ export class EquipmentService {
   }
 
   async findAll() {
-    return await this.equipmentsRepository.find();
+    return await this.equipmentsRepository
+      .createQueryBuilder('equip')
+      .leftJoinAndSelect('equip.manager', 'user')
+      .leftJoinAndSelect('equip.project', 'project')
+      .getMany();
   }
 
   async findOne(id: string) {

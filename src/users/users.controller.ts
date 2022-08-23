@@ -71,10 +71,10 @@ export class UsersController {
   getManaged(@Param('id') id: string) {
     return this.usersService.getManagedProjectsOfUser(id);
   }
-  /* @Get('projects/member/:id')
+  @Get('projects/member/:id')
   getMemberProjects(@Param('id') id: string) {
     return this.usersService.getMemberProjectsOfUser(id);
-  }*/
+  }
   @Get('filter/:keyword')
   filter(@Param('keyword') keyword: string) {
     return this.usersService.filter(keyword);
