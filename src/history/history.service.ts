@@ -61,6 +61,7 @@ export class HistoryService {
   async getUserHistory(userId: string) {
     return await this.historyRepository
       .createQueryBuilder('history')
+      .leftJoinAndSelect('history.user', 'user')
       .leftJoinAndSelect('history.equipment', 'equipment')
       .leftJoinAndSelect('history.project', 'project')
       .where('history.user = :id', { id: userId })
@@ -69,6 +70,7 @@ export class HistoryService {
   async getProjectHistory(projectId: string) {
     return await this.historyRepository
       .createQueryBuilder('history')
+      .leftJoinAndSelect('history.project', 'project')
       .leftJoinAndSelect('history.equipment', 'equipment')
       .leftJoinAndSelect('history.user', 'user')
       .where('history.project = :id', { id: projectId })
@@ -78,6 +80,7 @@ export class HistoryService {
     return await this.historyRepository
       .createQueryBuilder('history')
       .leftJoinAndSelect('history.user', 'user')
+      .leftJoinAndSelect('history.equipment', 'equipment')
       .leftJoinAndSelect('history.project', 'project')
       .where('history.equipment = :id', { id: equipmentId })
       .getMany();

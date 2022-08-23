@@ -83,45 +83,47 @@ export class EquipmentService {
 
   async affectEquipToProject(createTake: CreateTakeHistoryDto) {
     //Affect equipment to project, this is done by a manager.
-    let equipment = await this.findOne(createTake.equipment.id);
+    let equipment = await this.findOne(
+      createTake.equipment as unknown as string,
+    );
     if (equipment.project != null) {
       throw new BadRequestException('Ce matériel appartient déja à un projet.');
     } else {
       await this.historyService.createTake(createTake);
       await this.equipmentsRepository
         .createQueryBuilder()
+        .relation('manager')
+        .of(equipment)
+        .set(createTake.user);
+      await this.equipmentsRepository
+        .createQueryBuilder()
         .relation('project')
         .of(equipment)
         .set(createTake.project);
-      await this.equipmentsRepository
-        .createQueryBuilder()
-        .relation('manager')
-        .of(equipment)
-        .set(createTake.project.manager);
       return await this.equipmentsRepository
         .createQueryBuilder()
         .update()
+        .where('id = :id', { id: equipment.id })
         .set({
           availability: EquipmentStatusEnum.InUseToOthers,
         })
-        .where('id = :id', { id: equipment.id })
         .execute();
     }
   }
   async returnEquipFromProject(createReturn: CreateReturnHistoryDto) {
     //Returns equipment to global storage and out of project jurisdiction, this is done by manager.
-    let project = await this.equipmentsRepository
-      .createQueryBuilder()
-      .relation('project')
-      .of(createReturn.equipment)
-      .loadOne();
-    if (project.id != createReturn.project) {
+    let project = await this.projectService.findOne(
+      createReturn.project as unknown as string,
+    );
+    if (project.id != (createReturn.project as unknown as string)) {
       throw new BadRequestException(
         "Ce matériel n'appartient pas à ce projet!",
       );
     } else {
       await this.historyService.createReturn(createReturn);
-      let equipment = await this.findOne(createReturn.equipment.id);
+      let equipment = await this.findOne(
+        createReturn.equipment as unknown as string,
+      );
       await this.equipmentsRepository
         .createQueryBuilder()
         .relation('project')
@@ -143,10 +145,12 @@ export class EquipmentService {
     }
   }
   async affectEquipToUserProject(createTakeUser: CreateTakeHistoryDto) {
-    let members = this.projectService.getMembers(createTakeUser.project.id);
+    let members = this.projectService.getMembers(
+      createTakeUser.project as unknown as string,
+    );
     if ((await members).includes(createTakeUser.user)) {
       let equipment = await this.equipmentsRepository.findOneBy({
-        id: createTakeUser.equipment.id,
+        id: createTakeUser.equipment as unknown as string,
       });
       await this.historyService.createTake(createTakeUser);
       await this.equipmentsRepository
@@ -164,17 +168,22 @@ export class EquipmentService {
       throw new UnauthorizedException('You are not a member of this project.');
   }
   async removeEquipToUserProject(createReturnUser: CreateReturnHistoryDto) {
-    let members = this.projectService.getMembers(createReturnUser.project.id);
+    let members = this.projectService.getMembers(
+      createReturnUser.project as unknown as string,
+    );
+    let project = await this.projectService.findOne(
+      createReturnUser.project as unknown as string,
+    );
     if ((await members).includes(createReturnUser.user)) {
       let equipment = await this.equipmentsRepository.findOneBy({
-        id: createReturnUser.equipment.id,
+        id: createReturnUser.equipment as unknown as string,
       });
       await this.historyService.createReturn(createReturnUser);
       await this.equipmentsRepository
         .createQueryBuilder()
         .relation('manager')
         .of(equipment)
-        .set(createReturnUser.project.manager);
+        .set(project.manager);
       return await this.equipmentsRepository
         .createQueryBuilder()
         .update()
@@ -196,10 +205,11 @@ export class EquipmentService {
   }
   async getByProject(id: string) {
     return this.equipmentsRepository
-      .createQueryBuilder()
+      .createQueryBuilder('equip')
       .select()
-      .where('projectId=:id', { id: id })
-      .execute();
+      .where('equip.projectId=:id', { id: id })
+      .leftJoinAndSelect('equip.manager', 'user')
+      .getMany();
   }
   async getMeasurementsEquipement() {
     return await this.equipmentsRepository.find({
