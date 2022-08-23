@@ -135,6 +135,6 @@ export class ProjectService {
         userId: memberId,
       })
       .leftJoinAndSelect('project.manager', 'users')
-      .getManyAndCount();
+      .getMany();
   }
 }

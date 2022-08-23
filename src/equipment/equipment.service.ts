@@ -158,8 +158,7 @@ export class EquipmentService {
     let members = await this.projectService.getMembers(
       createTakeUser.project as unknown as string,
     );
-    let memberIds = members.map((element) => element.id);
-    if (memberIds.includes(createTakeUser.user)) {
+    if ((await members).includes(createTakeUser.user)) {
       let equipment = await this.equipmentsRepository.findOneBy({
         id: createTakeUser.equipment as unknown as string,
       });
