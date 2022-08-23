@@ -152,6 +152,7 @@ export class EquipmentService {
     let members = this.projectService.getMembers(
       createTakeUser.project as unknown as string,
     );
+    console.log(createTakeUser.project)
     if ((await members).includes(createTakeUser.user)) {
       let equipment = await this.equipmentsRepository.findOneBy({
         id: createTakeUser.equipment as unknown as string,
