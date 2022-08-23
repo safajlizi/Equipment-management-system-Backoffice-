@@ -63,11 +63,11 @@ export class Equipment {
   defaults: string;
   @Column()
   category: string;
-  @Column({ type: 'timestamp', nullable: true })
+  /*@Column({ type: 'timestamp', nullable: true })
   date_res: Date;
   @Column({ type: 'timestamp', nullable: true })
-  date_lib: Date;
-  @Column()
+  date_lib: Date;*/
+  @Column({nullable: true })
   description: string;
   @OneToMany((type) => History, (history) => history.equipment, {
     nullable: true,
