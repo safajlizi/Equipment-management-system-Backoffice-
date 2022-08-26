@@ -93,10 +93,11 @@ export class UsersService {
   }
   async getMemberProjectsOfUser(id: string) {
     return await this.usersRepository
-      .createQueryBuilder()
-      .relation('projects')
-      .of(id)
-      .loadMany();
+      .createQueryBuilder('users')
+      .leftJoinAndSelect('users.projects', 'project')
+      .leftJoinAndSelect('project.manager', 'manager')
+      .where('users.id = :id', { id: id })
+      .getOne();
   }
 
   async filter(keyword: string) {

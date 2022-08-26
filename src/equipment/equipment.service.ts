@@ -84,7 +84,7 @@ export class EquipmentService {
   }
   async declareEquipFaulty(createFault: CreateFaultyHistoryDto) {
     this.historyService.createFault(createFault);
-    this.equipmentsRepository.update(createFault.equipment, {
+    return await this.equipmentsRepository.update(createFault.equipment, {
       defaults: createFault.description,
       conformity: EquipmentConformityEnum.notcompliant,
     });

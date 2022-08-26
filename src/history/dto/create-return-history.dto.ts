@@ -13,5 +13,5 @@ export class CreateReturnHistoryDto {
   @Type(() => Project)
   project: Project;
   description: string;
-  action_type = 'return';
+  action_type?: string = 'return';
 }
