@@ -17,6 +17,8 @@ import { User } from 'src/users/entities/user.entity';
 import { Like, Repository } from 'typeorm';
 import { CreateEquipmentDto } from './dto/create-equipment.dto';
 import { UpdateEquipmentDto } from './dto/update-equipment.dto';
+import { VisibiltyUpdateDto } from './dto/visibility-update.dto';
+import { EquipmentVisibility } from './entities/equipment-visibility.entity';
 import {
   Equipment,
   EquipmentCalibrationEnum,
@@ -32,6 +34,8 @@ export class EquipmentService {
     private equipmentsRepository: Repository<Equipment>,
     private readonly projectService: ProjectService,
     private readonly historyService: HistoryService,
+    @InjectRepository(EquipmentVisibility)
+    private visibilityRepository: Repository<EquipmentVisibility>,
   ) {}
   async create(createEquipmentDto: CreateEquipmentDto) {
     var equipment = this.equipmentsRepository.create(createEquipmentDto);
@@ -66,7 +70,7 @@ export class EquipmentService {
   }
 
   async remove(id: string) {
-    return await this.equipmentsRepository.delete(id);
+    return await this.equipmentsRepository.softDelete(id);
   }
   async filter(keyword: string) {
     return await this.equipmentsRepository.find({
@@ -84,7 +88,10 @@ export class EquipmentService {
   }
   async declareEquipFaulty(createFault: CreateFaultyHistoryDto) {
     this.historyService.createFault(createFault);
-    return await this.equipmentsRepository.update(createFault.equipment, {
+    let equipment = await this.findOne(
+      createFault.equipment as unknown as string,
+    );
+    return await this.equipmentsRepository.update(equipment.id, {
       defaults: createFault.description,
       conformity: EquipmentConformityEnum.notcompliant,
     });
@@ -115,6 +122,7 @@ export class EquipmentService {
         .where('id = :id', { id: equipment.id })
         .set({
           availability: EquipmentStatusEnum.InUseToOthers,
+          date_lib: createTake.date_lib,
         })
         .execute();
     }
@@ -248,5 +256,24 @@ export class EquipmentService {
       .select('category')
       .distinct()
       .execute();
+  }
+
+  /*Visibility operations*/
+  async getVisibility() {
+    return await this.visibilityRepository.find();
+  }
+  async updateVisibility(visibilityState: VisibiltyUpdateDto) {
+    visibilityState.disabled.map(async (element) => {
+      await this.visibilityRepository.update(
+        { field: element },
+        { visible: false },
+      );
+    });
+    visibilityState.enabled.map(async (element) => {
+      await this.visibilityRepository.update(
+        { field: element },
+        { visible: true },
+      );
+    });
   }
 }

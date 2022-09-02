@@ -6,10 +6,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
 import { ProjectModule } from 'src/project/project.module';
 import { HistoryModule } from 'src/history/history.module';
+import { EquipmentVisibility } from './entities/equipment-visibility.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Equipment]),
+    TypeOrmModule.forFeature([EquipmentVisibility]),
     ProjectModule,
     HistoryModule,
   ],

@@ -72,10 +72,11 @@ export class UsersService {
   }
   async getEquips(id: string) {
     return await this.usersRepository
-      .createQueryBuilder()
-      .relation('equipment')
-      .of(id)
-      .loadMany();
+      .createQueryBuilder('users')
+      .leftJoinAndSelect('users.equipment', 'equipment')
+      .leftJoinAndSelect('equipment.project', 'project')
+      .where('users.id = :id', { id: id })
+      .getMany();
   }
   async addEquip(userId: string, equipId: string | string[]) {
     return await this.usersRepository

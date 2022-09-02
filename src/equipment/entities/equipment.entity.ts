@@ -3,6 +3,7 @@ import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
@@ -63,12 +64,15 @@ export class Equipment {
   defaults: string;
   @Column()
   category: string;
-  /*@Column({ type: 'timestamp', nullable: true })
-  date_res: Date;
+
   @Column({ type: 'timestamp', nullable: true })
-  date_lib: Date;*/
-  @Column({nullable: true })
+  date_lib: Date;
+  @Column({ nullable: true })
   description: string;
+  @Column({ nullable: true })
+  maker: string;
+  @Column({ nullable: true })
+  serial_number: string;
   @OneToMany((type) => History, (history) => history.equipment, {
     nullable: true,
   })
@@ -87,4 +91,6 @@ export class Equipment {
     onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   updated_at: Date;
+  @DeleteDateColumn({ type: 'timestamp', nullable: true })
+  deleted_at: Date;
 }

@@ -30,6 +30,10 @@ export class History {
   project: Project;
   @Column()
   action_type: string;
+  @Column({ nullable: true })
+  old: string;
+  @Column({ nullable: true })
+  new: string;
   /*@Column()
   status: boolean;*/
   /*@Column({ nullable: true })
