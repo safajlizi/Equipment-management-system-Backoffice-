@@ -28,5 +28,7 @@ export class UpdateEquipmentDto extends PartialType(CreateEquipmentDto) {
   @Type(() => Date)
   @IsDate()
   validity_date?: Date;
+  maker?: string;
+  serial_number?: string;
   cailbration: EquipmentCalibrationEnum;
 }

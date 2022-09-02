@@ -10,9 +10,6 @@ import {
 import { EquipmentService } from './equipment.service';
 import { CreateEquipmentDto } from './dto/create-equipment.dto';
 import { UpdateEquipmentDto } from './dto/update-equipment.dto';
-import { UserDecorator } from 'src/decorators/user.decorator';
-import { User } from 'src/users/entities/user.entity';
-import { CreateHistoryDto } from 'src/history/dto/create-history.dto';
 import {
   ApiBadRequestResponse,
   ApiOkResponse,
@@ -21,7 +18,6 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { CreateTakeHistoryDto } from 'src/history/dto/create-take-history.dto';
-import { CreateTakesHistoryDto } from 'src/history/dto/create-takes-history.dto';
 import { CreateReturnHistoryDto } from 'src/history/dto/create-return-history.dto';
 import { CreateFaultyHistoryDto } from 'src/history/dto/create-faulty-history.dto';
 import { Equipment } from './entities/equipment.entity';

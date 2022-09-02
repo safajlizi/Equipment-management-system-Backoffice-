@@ -3,6 +3,7 @@ import { History } from 'src/history/entities/history.entity';
 import { Project } from 'src/project/entities/project.entity';
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   ManyToMany,
   OneToMany,
@@ -66,4 +67,6 @@ export class User {
 
   @OneToMany((type) => Equipment, (equip) => equip.created_by)
   created: Equipment[];
+  @DeleteDateColumn({ type: 'timestamp', nullable: true })
+  deleted_at: Date;
 }

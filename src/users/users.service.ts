@@ -9,7 +9,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserRoleEnum } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
-import { use } from 'passport';
 @Injectable()
 export class UsersService {
   constructor(
@@ -26,12 +25,14 @@ export class UsersService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.usersRepository.delete(id);
+    await this.usersRepository.softDelete(id);
   }
   async create(registerdto: CreateUserDto): Promise<User> {
     const user = this.usersRepository.create(registerdto);
     user.salt = await bcrypt.genSalt();
-    user.password = await bcrypt.hash(user.password, user.salt);
+    let password = Math.random().toString(36).slice(-8);
+    user.password = await bcrypt.hash(password, user.salt);
+    //MAILER SEND EMAIL WITH PASSWORD HERE.
     return await this.usersRepository.save(user);
   }
   async update(id: string, updateUserDto: UpdateUserDto) {
