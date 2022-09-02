@@ -156,6 +156,7 @@ export class EquipmentService {
         .update()
         .set({
           availability: EquipmentStatusEnum.availableToAll,
+          date_lib: null,
         })
         .where('id = :id', { id: equipment.id })
         .execute();
