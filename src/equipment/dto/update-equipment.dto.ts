@@ -15,18 +15,11 @@ import {
 import { CreateEquipmentDto } from './create-equipment.dto';
 
 export class UpdateEquipmentDto extends PartialType(CreateEquipmentDto) {
-  @IsString()
-  @MaxLength(255)
   label?: string;
-  @IsBoolean()
   property?: EquipmentPropertyEnum;
-  @IsString()
-  @IsNullable()
   defaults?: string;
-  @IsString()
   description?: string;
   @Type(() => Date)
-  @IsDate()
   validity_date?: Date;
   maker?: string;
   serial_number?: string;
