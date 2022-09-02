@@ -260,7 +260,7 @@ export class EquipmentService {
 
   /*Visibility operations*/
   async getVisibility() {
-    return await this.visibilityRepository.find();
+    return await this.visibilityRepository.find({});
   }
   async updateVisibility(visibilityState: VisibiltyUpdateDto) {
     visibilityState.disabled.map(async (element) => {
@@ -275,5 +275,9 @@ export class EquipmentService {
         { visible: true },
       );
     });
+  }
+  async createVisibility(fieldname: string) {
+    let visibility = this.visibilityRepository.create({ field: fieldname });
+    return this.visibilityRepository.save(visibility);
   }
 }

@@ -75,6 +75,7 @@ export class UsersService {
       .createQueryBuilder('users')
       .leftJoinAndSelect('users.equipment', 'equipment')
       .leftJoinAndSelect('equipment.project', 'project')
+      .leftJoinAndSelect('project.manager', 'user')
       .where('users.id = :id', { id: id })
       .getMany();
   }

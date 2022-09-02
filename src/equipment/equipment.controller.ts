@@ -25,6 +25,7 @@ import { CreateTakesHistoryDto } from 'src/history/dto/create-takes-history.dto'
 import { CreateReturnHistoryDto } from 'src/history/dto/create-return-history.dto';
 import { CreateFaultyHistoryDto } from 'src/history/dto/create-faulty-history.dto';
 import { Equipment } from './entities/equipment.entity';
+import { VisibiltyUpdateDto } from './dto/visibility-update.dto';
 
 @Controller('equipment')
 @ApiTags('Equipment')
@@ -139,5 +140,17 @@ export class EquipmentController {
   @Get('/categories')
   getCategories() {
     return this.equipmentService.getCategories();
+  }
+  @Post('/visibility')
+  updateVisibility(@Body() visibility: VisibiltyUpdateDto) {
+    return this.equipmentService.updateVisibility(visibility);
+  }
+  @Get('/visibility/all')
+  getVisibility() {
+    return this.equipmentService.getVisibility();
+  }
+  @Post('/visibility/new')
+  newVisibility(@Body('field') fieldname: string) {
+    return this.equipmentService.createVisibility(fieldname);
   }
 }
