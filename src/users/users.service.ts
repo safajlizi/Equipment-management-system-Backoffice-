@@ -8,12 +8,15 @@ import { Repository, Like } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserRoleEnum } from './entities/user.entity';
+import { MailerService } from '@nestjs-modules/mailer';
+
 import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private readonly mailerService: MailerService
   ) {}
 
   findAll(): Promise<User[]> {
@@ -27,11 +30,32 @@ export class UsersService {
   async remove(id: string): Promise<void> {
     await this.usersRepository.softDelete(id);
   }
+  public mail(mail:string,username:string,password:string): void {
+    this.mailerService
+      .sendMail({
+        to: mail,
+        from: 'safajlizi199@gmail.com',
+        subject: 'Account Information ✔',
+        template: 'welcome', 
+        context: {
+          // Data to be sent to template engine.
+          Password: password,
+          username:username,
+        },
+      })
+      .then(() => {})
+      .catch(() => {});
+  }
+
   async create(registerdto: CreateUserDto): Promise<User> {
     const user = this.usersRepository.create(registerdto);
     user.salt = await bcrypt.genSalt();
     let password = Math.random().toString(36).slice(-8);
     user.password = await bcrypt.hash(password, user.salt);
+
+    //mail
+    this.mail(user.email,user.username,user.password)
+
     //MAILER SEND EMAIL WITH PASSWORD HERE.
     return await this.usersRepository.save(user);
   }
@@ -118,4 +142,5 @@ export class UsersService {
       where: { role: UserRoleEnum.manager },
     });
   }
+
 }
