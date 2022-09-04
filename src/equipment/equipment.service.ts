@@ -70,7 +70,7 @@ export class EquipmentService {
   }
 
   async remove(id: string) {
-    return await this.equipmentsRepository.softDelete(id);
+    return await this.equipmentsRepository.update(id, { deleted: true });
   }
   async filter(keyword: string) {
     return await this.equipmentsRepository.find({

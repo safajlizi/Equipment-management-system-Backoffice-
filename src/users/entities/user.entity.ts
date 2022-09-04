@@ -67,6 +67,6 @@ export class User {
 
   @OneToMany((type) => Equipment, (equip) => equip.created_by)
   created: Equipment[];
-  @DeleteDateColumn({ type: 'timestamp', nullable: true })
-  deleted_at: Date;
+  @Column({default: false})
+  deleted: boolean;
 }
