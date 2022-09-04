@@ -28,7 +28,7 @@ export class UsersService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.usersRepository.softDelete(id);
+    await this.usersRepository.update(id, { deleted: true });
   }
   public mail(mail:string,username:string,password:string): void {
     this.mailerService
