@@ -60,7 +60,7 @@ export class ProjectService {
   */
 
   async remove(id: string) {
-    return await this.projectRepository.softDelete(id);
+    return await this.projectRepository.update(id, { deleted: true });
   }
 
   async addMember(id: string, memberId: string) {

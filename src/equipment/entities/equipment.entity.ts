@@ -91,6 +91,6 @@ export class Equipment {
     onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   updated_at: Date;
-  @DeleteDateColumn({ type: 'timestamp', nullable: true })
-  deleted_at: Date;
+  @Column({ default: false })
+  deleted: boolean;
 }

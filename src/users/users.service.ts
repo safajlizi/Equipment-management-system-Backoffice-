@@ -25,7 +25,7 @@ export class UsersService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.usersRepository.softDelete(id);
+    await this.usersRepository.update(id, { deleted: true });
   }
   async create(registerdto: CreateUserDto): Promise<User> {
     const user = this.usersRepository.create(registerdto);
