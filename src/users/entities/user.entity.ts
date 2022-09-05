@@ -45,14 +45,13 @@ export class User {
   @Column({ default: UserRoleEnum.user })
   role: UserRoleEnum;
 
-  @OneToMany((type) => Equipment, (equipment) => equipment.manager, {
-    nullable: true,
-    cascade: true,
-  })
+  @OneToMany((type) => Equipment, (equipment) => equipment.manager)
   equipment: Equipment[];
 
   @OneToMany((type) => Project, (project) => project.manager, {
     nullable: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'NO ACTION',
   })
   managed: Project[];
 
@@ -61,12 +60,13 @@ export class User {
 
   @OneToMany((type) => History, (history) => history.user, {
     nullable: true,
-    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'NO ACTION',
   })
   history: History[];
 
   @OneToMany((type) => Equipment, (equip) => equip.created_by)
   created: Equipment[];
-  @Column({default: false})
+  @Column({ default: false })
   deleted: boolean;
 }

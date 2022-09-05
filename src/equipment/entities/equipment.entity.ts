@@ -40,12 +40,10 @@ export class Equipment {
 
   @Column()
   ref: string;
-  @ManyToOne((type) => User, (user) => user.equipment, {
-    nullable: true,
-  })
+  @ManyToOne((type) => User, (user) => user.equipment, { cascade: ['update'] })
   manager: User;
   @ManyToOne((type) => Project, (project) => project.equipment, {
-    cascade: true,
+    cascade: ['update'],
   })
   project: Project;
   @Column({ default: EquipmentPropertyEnum.sofia })
