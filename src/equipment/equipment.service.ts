@@ -122,6 +122,7 @@ export class EquipmentService {
         .where('id = :id', { id: equipment.id })
         .set({
           availability: EquipmentStatusEnum.InUseToOthers,
+          date_lib: createTake.date_lib,
         })
         .execute();
     }
@@ -182,7 +183,6 @@ export class EquipmentService {
         .update()
         .set({
           availability: EquipmentStatusEnum.InUseToProject,
-          date_lib: createTakeUser.date_lib,
         })
         .where('id = :id', { id: equipment.id })
         .execute();
