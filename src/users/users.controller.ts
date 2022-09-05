@@ -76,7 +76,7 @@ export class UsersController {
     return this.usersService.getMemberProjectsOfUser(id);
   }
   @Get('filter/:keyword')
-  filter(@Param('keyword') keyword: string) {
+  filter(@Param('keyword') keyword: any) {
     return this.usersService.filter(keyword);
   }
 }

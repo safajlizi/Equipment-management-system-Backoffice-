@@ -30,21 +30,26 @@ export class UsersService {
   async remove(id: string): Promise<void> {
     await this.usersRepository.update(id, { deleted: true });
   }
+
   public mail(mail:string,username:string,password:string): void {
-    this.mailerService
+ this.mailerService
       .sendMail({
         to: mail,
         from: 'safajlizi199@gmail.com',
         subject: 'Account Information ✔',
-        template: 'welcome', 
-        context: {
-          // Data to be sent to template engine.
-          Password: password,
+        template: 'email',
+      context: {
+          password: password,
           username:username,
-        },
+        }
       })
-      .then(() => {})
-      .catch(() => {});
+      .then(() => {
+        console.log("success")
+      })
+      .catch((error) => {
+        console.log(error)
+
+      });
   }
 
   async create(registerdto: CreateUserDto): Promise<User> {
@@ -54,7 +59,7 @@ export class UsersService {
     user.password = await bcrypt.hash(password, user.salt);
 
     //mail
-    this.mail(user.email,user.username,user.password)
+    this.mail(user.email,user.username,password)
 
     //MAILER SEND EMAIL WITH PASSWORD HERE.
     return await this.usersRepository.save(user);
@@ -127,13 +132,14 @@ export class UsersService {
       .getOne();
   }
 
-  async filter(keyword: string) {
+  async filter(keyword: any) {
     return await this.usersRepository.find({
       where: [
         { email: Like(`%${keyword}%`) },
         { username: Like(`%${keyword}%`) },
         { firstname: Like(`%${keyword}%`) },
         { lastname: Like(`%${keyword}%`) },
+        { deleted: Like(keyword) },
       ],
     });
   }
