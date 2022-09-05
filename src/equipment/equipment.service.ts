@@ -219,7 +219,10 @@ export class EquipmentService {
         return await this.equipmentsRepository
           .createQueryBuilder()
           .update()
-          .set({ availability: EquipmentStatusEnum.InUseToOthers })
+          .set({
+            availability: EquipmentStatusEnum.InUseToOthers,
+            date_lib: null,
+          })
           .where('id = :id', { id: equipment.id })
           .execute();
       }

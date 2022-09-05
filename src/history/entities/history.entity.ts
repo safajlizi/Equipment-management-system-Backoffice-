@@ -8,6 +8,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  TableInheritance,
   UpdateDateColumn,
 } from 'typeorm';
 export enum HistoryTypeEnum {}
@@ -31,9 +32,9 @@ export class History {
   @Column()
   action_type: string;
   @Column({ nullable: true })
-  old: string;
+  old: any;
   @Column({ nullable: true })
-  new: string;
+  new: any;
   /*@Column()
   status: boolean;*/
   /*@Column({ nullable: true })

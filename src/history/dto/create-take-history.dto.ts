@@ -2,7 +2,7 @@ import { Type } from 'class-transformer';
 import { Project } from 'src/project/entities/project.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Equipment } from 'src/equipment/entities/equipment.entity';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsDate, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateTakeHistoryDto {
   @Type(() => User)
@@ -16,6 +16,7 @@ export class CreateTakeHistoryDto {
   @IsNotEmpty()
   description: string;
   @Type(() => Date)
+  @IsDate()
   date_lib: Date;
   date_res?: Date = new Date();
 }
