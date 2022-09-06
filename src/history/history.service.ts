@@ -173,11 +173,23 @@ export class HistoryService {
           .leftJoinAndSelect('history.equipment', 'equipment')
           .leftJoinAndSelect('history.project', 'project')
           .where('history.user = :id', { id: filterData.id })
-          .andWhere('history.created_at = :date', {
+          .andWhere('history.created_at LIKE :date', {
             date: filterData.date,
           })
           .getMany();
       }
     }
+  }
+  async search(keyword: string) {
+    return await this.historyRepository
+      .createQueryBuilder('history')
+      .leftJoinAndSelect('history.equipment', 'equipment')
+      .leftJoinAndSelect('history.project', 'project')
+      .leftJoinAndSelect('history.user', 'user')
+      .where(
+        'user.email like :keyword or user.username like :keyword or user.firstname like :keyword or user.lastname like :keyword or equipment.label like :keyword or equipment.ref like :keyword or project.name like :keyword',
+        { keyword: `%${keyword}%` },
+      )
+      .getMany();
   }
 }
