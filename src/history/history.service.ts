@@ -180,13 +180,14 @@ export class HistoryService {
       }
     }
   }
-  async search(keyword: string) {
+  async searchUserHistory(keyword: string, UserId: string) {
     return await this.historyRepository
       .createQueryBuilder('history')
       .leftJoinAndSelect('history.equipment', 'equipment')
       .leftJoinAndSelect('history.project', 'project')
       .leftJoinAndSelect('history.user', 'user')
-      .where(
+      .where('user.id = :id', { id: UserId })
+      .andWhere(
         'user.email like :keyword or user.username like :keyword or user.firstname like :keyword or user.lastname like :keyword or equipment.label like :keyword or equipment.ref like :keyword or project.name like :keyword',
         { keyword: `%${keyword}%` },
       )

@@ -69,8 +69,8 @@ export class HistoryController {
   getFilteredHistoryCreationDate(@Body() filterData: FilterDateDto) {
     return this.historyService.filterByCreationDate(filterData);
   }
-  @Get('/search/:keyword')
-  search(@Param('keyword') keyword: string) {
-    return this.historyService.search(keyword);
+  @Get('/search/:userid/:keyword')
+  search(@Param('keyword') keyword: string, @Param('userid') userId: string) {
+    return this.historyService.searchUserHistory(keyword, userId);
   }
 }

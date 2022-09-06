@@ -44,7 +44,7 @@ export class EquipmentService {
         category: createEquipmentDto.category,
       })
     )[1];
-    equipment.ref = `${createEquipmentDto.category}_M${count}`;
+    equipment.ref = `${createEquipmentDto.category.name}_M${count}`;
     return await this.equipmentsRepository.save(equipment);
   }
 
