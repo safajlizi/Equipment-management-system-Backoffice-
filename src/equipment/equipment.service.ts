@@ -61,6 +61,8 @@ export class EquipmentService {
       .createQueryBuilder('equip')
       .leftJoinAndSelect('equip.manager', 'user')
       .leftJoinAndSelect('equip.project', 'project')
+      .leftJoinAndSelect('equip.property', 'property')
+      .leftJoinAndSelect('equip.category', 'category')
       .getMany();
   }
 
