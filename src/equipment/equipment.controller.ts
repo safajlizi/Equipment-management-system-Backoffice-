@@ -103,13 +103,13 @@ export class EquipmentController {
     return this.equipmentService.declareEquipFaulty(createFaulty);
   }
 
-  @Get('/prop_client/all')
+  /*@Get('/prop_client/all')
   @ApiOkResponse({
     description: 'Equipment that is client property is returned.',
   })
   getPropClient() {
     return this.equipmentService.getPropClient();
-  }
+  }*/
 
   @ApiOkResponse({
     description: 'Equipment affected to user within a project succesfully.',

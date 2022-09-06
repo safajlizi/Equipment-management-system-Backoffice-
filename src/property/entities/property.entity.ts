@@ -1,13 +1,13 @@
 import { Equipment } from 'src/equipment/entities/equipment.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class Category {
+export class Property {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
   @Column()
   name: string;
-  @ManyToOne((type) => Equipment, (equip) => equip.category)
+
+  @OneToMany((type) => Equipment, (equipment) => equipment.property)
   equipment: Equipment[];
 }

@@ -7,11 +7,12 @@ import {
 } from '../entities/equipment.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Category } from 'src/category/entities/category.entity';
+import { Property } from 'src/property/entities/property.entity';
 export class CreateEquipmentDto {
   @ApiProperty()
   manager?: User;
-  @ApiProperty({ enum: ['Client', 'Sofia'] })
-  property: EquipmentPropertyEnum;
+  @ApiProperty()
+  property: Property;
   @ApiProperty()
   label: string;
   @ApiProperty()

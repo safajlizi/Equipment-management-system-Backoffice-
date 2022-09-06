@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { HistoryModule } from './history/history.module';
 import { ProjectModule } from './project/project.module';
 import { CategoryModule } from './category/category.module';
+import { PropertyModule } from './property/property.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { CategoryModule } from './category/category.module';
     HistoryModule,
     ProjectModule,
     CategoryModule,
+    PropertyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

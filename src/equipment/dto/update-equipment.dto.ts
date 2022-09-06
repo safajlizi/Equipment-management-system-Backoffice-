@@ -9,6 +9,7 @@ import {
 } from 'class-validator';
 import { Category } from 'src/category/entities/category.entity';
 import { IsNullable } from 'src/decorators/isnull.decorator';
+import { Property } from 'src/property/entities/property.entity';
 import {
   EquipmentCalibrationEnum,
   EquipmentConformityEnum,
@@ -18,8 +19,10 @@ import { CreateEquipmentDto } from './create-equipment.dto';
 
 export class UpdateEquipmentDto extends PartialType(CreateEquipmentDto) {
   label?: string;
-  property?: EquipmentPropertyEnum;
+  @Type(() => Property)
+  property?: Property;
   defaults?: string;
+  @Type(() => Category)
   category?: Category;
   description?: string;
   conformity?: EquipmentConformityEnum;

@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNotEmpty } from 'class-validator';
+import { CategoryService } from 'src/category/category.service';
 import { CreateFaultyHistoryDto } from 'src/history/dto/create-faulty-history.dto';
 import { CreateHistoryDto } from 'src/history/dto/create-history.dto';
 import { CreateReturnHistoryDto } from 'src/history/dto/create-return-history.dto';
@@ -13,6 +14,7 @@ import { CreateTakesHistoryDto } from 'src/history/dto/create-takes-history.dto'
 import { HistoryService } from 'src/history/history.service';
 import { Project } from 'src/project/entities/project.entity';
 import { ProjectService } from 'src/project/project.service';
+import { PropertyService } from 'src/property/property.service';
 import { User } from 'src/users/entities/user.entity';
 import { Like, Repository } from 'typeorm';
 import { CreateEquipmentDto } from './dto/create-equipment.dto';
@@ -34,17 +36,23 @@ export class EquipmentService {
     private equipmentsRepository: Repository<Equipment>,
     private readonly projectService: ProjectService,
     private readonly historyService: HistoryService,
+    private readonly categoryService: CategoryService,
+    private readonly propertyService: PropertyService,
     @InjectRepository(EquipmentVisibility)
     private visibilityRepository: Repository<EquipmentVisibility>,
   ) {}
   async create(createEquipmentDto: CreateEquipmentDto) {
     var equipment = this.equipmentsRepository.create(createEquipmentDto);
+    let category = await this.categoryService.findOne(
+      createEquipmentDto.category as unknown as string,
+    );
+    console.log(category);
     let count = (
       await this.equipmentsRepository.findAndCountBy({
-        category: createEquipmentDto.category,
+        category: category,
       })
     )[1];
-    equipment.ref = `${createEquipmentDto.category.name}_M${count}`;
+    equipment.ref = `${category.name}_M${count}`;
     return await this.equipmentsRepository.save(equipment);
   }
 
@@ -231,11 +239,11 @@ export class EquipmentService {
     } else
       throw new UnauthorizedException('You are not a member of this project.');
   }
-  async getPropClient() {
+  /*async getPropClient() {
     return await this.equipmentsRepository.find({
       where: { property: EquipmentPropertyEnum.client },
     });
-  }
+  }*/
   async getByStatus(status: EquipmentStatusEnum) {
     return await this.equipmentsRepository.find({
       where: { availability: status },

@@ -30,6 +30,13 @@ export class CategoryService {
       .where('category.id = :id', { id: id })
       .getOne();
   }
+  async findOneByName(name: string) {
+    return await this.categoryRepository
+      .createQueryBuilder('category')
+      .select()
+      .where('category.name = :name', { name: name })
+      .getOne();
+  }
 
   async update(id: string, updateCategoryDto: UpdateCategoryDto) {
     return await this.categoryRepository

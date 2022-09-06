@@ -7,6 +7,8 @@ import { UsersService } from 'src/users/users.service';
 import { ProjectModule } from 'src/project/project.module';
 import { HistoryModule } from 'src/history/history.module';
 import { EquipmentVisibility } from './entities/equipment-visibility.entity';
+import { PropertyModule } from 'src/property/property.module';
+import { CategoryModule } from 'src/category/category.module';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { EquipmentVisibility } from './entities/equipment-visibility.entity';
     TypeOrmModule.forFeature([EquipmentVisibility]),
     ProjectModule,
     HistoryModule,
+    PropertyModule,
+    CategoryModule,
   ],
   controllers: [EquipmentController],
   providers: [EquipmentService],
