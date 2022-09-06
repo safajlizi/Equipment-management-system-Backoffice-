@@ -66,6 +66,11 @@ export class EquipmentService {
   }
 
   async update(id: string, updateEquipmentDto: UpdateEquipmentDto) {
+    let keys = Object.keys(updateEquipmentDto);
+    keys.map((key) => {
+      !updateEquipmentDto[key] && delete updateEquipmentDto[key];
+    });
+    console.log(updateEquipmentDto);
     return await this.equipmentsRepository.update(id, updateEquipmentDto);
   }
 

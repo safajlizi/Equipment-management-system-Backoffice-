@@ -10,8 +10,16 @@ import { CreateHistoryDto } from './dto/create-history.dto';
 import { CreateReturnHistoryDto } from './dto/create-return-history.dto';
 import { CreateTakeHistoryDto } from './dto/create-take-history.dto';
 import { CreateTakesHistoryDto } from './dto/create-takes-history.dto';
+import { FilterActionTypeDto } from './dto/filter-action_type.dto';
+import { FilterDateDto } from './dto/filter-date.dto';
 import { UpdateHistoryDto } from './dto/update-history.dto';
 import { History } from './entities/history.entity';
+
+export enum Concerning {
+  equipment = 'equipment',
+  user = 'user',
+  project = 'project',
+}
 
 @Injectable()
 export class HistoryService {
@@ -65,6 +73,7 @@ export class HistoryService {
       .leftJoinAndSelect('history.equipment', 'equipment')
       .leftJoinAndSelect('history.project', 'project')
       .where('history.user = :id', { id: userId })
+      .orderBy('history.created_at', 'ASC')
       .getMany();
   }
   async getProjectHistory(projectId: string) {
@@ -74,6 +83,7 @@ export class HistoryService {
       .leftJoinAndSelect('history.equipment', 'equipment')
       .leftJoinAndSelect('history.user', 'user')
       .where('history.project = :id', { id: projectId })
+      .orderBy('history.created_at', 'ASC')
       .getMany();
   }
   async getEquipmentHistory(equipmentId: string) {
@@ -83,6 +93,91 @@ export class HistoryService {
       .leftJoinAndSelect('history.equipment', 'equipment')
       .leftJoinAndSelect('history.project', 'project')
       .where('history.equipment = :id', { id: equipmentId })
+      .orderBy('history.created_at', 'ASC')
       .getMany();
+  }
+
+  //FILTERS
+
+  async filterByActionType(filterData: FilterActionTypeDto) {
+    switch (filterData.concerning) {
+      case Concerning.equipment: {
+        return await this.historyRepository
+          .createQueryBuilder('history')
+          .leftJoinAndSelect('history.user', 'user')
+          .leftJoinAndSelect('history.equipment', 'equipment')
+          .leftJoinAndSelect('history.project', 'project')
+          .where('history.equipment = :id', { id: filterData.id })
+          .andWhere('history.action_type = :action', {
+            action: filterData.action_type,
+          })
+          .getMany();
+      }
+      case Concerning.project: {
+        return await this.historyRepository
+          .createQueryBuilder('history')
+          .leftJoinAndSelect('history.project', 'project')
+          .leftJoinAndSelect('history.equipment', 'equipment')
+          .leftJoinAndSelect('history.user', 'user')
+          .where('history.project = :id', { id: filterData.id })
+          .andWhere('history.action_type = :action', {
+            action: filterData.action_type,
+          })
+          .getMany();
+      }
+      case Concerning.user: {
+        return await this.historyRepository
+          .createQueryBuilder('history')
+          .leftJoinAndSelect('history.user', 'user')
+          .leftJoinAndSelect('history.equipment', 'equipment')
+          .leftJoinAndSelect('history.project', 'project')
+          .where('history.user = :id', { id: filterData.id })
+          .andWhere('history.action_type = :action', {
+            action: filterData.action_type,
+          })
+          .getMany();
+      }
+    }
+  }
+
+  async filterByCreationDate(filterData: FilterDateDto) {
+    switch (filterData.concerning) {
+      case Concerning.equipment: {
+        return await this.historyRepository
+          .createQueryBuilder('history')
+          .leftJoinAndSelect('history.user', 'user')
+          .leftJoinAndSelect('history.equipment', 'equipment')
+          .leftJoinAndSelect('history.project', 'project')
+          .where('history.equipment = :id', { id: filterData.id })
+          .andWhere('history.created_at = :date', {
+            date: filterData.date,
+          })
+          .getMany();
+      }
+      case Concerning.project: {
+        return await this.historyRepository
+          .createQueryBuilder('history')
+          .leftJoinAndSelect('history.project', 'project')
+          .leftJoinAndSelect('history.equipment', 'equipment')
+          .leftJoinAndSelect('history.user', 'user')
+          .where('history.project = :id', { id: filterData.id })
+          .andWhere('history.created_at = :date', {
+            date: filterData.date,
+          })
+          .getMany();
+      }
+      case Concerning.user: {
+        return await this.historyRepository
+          .createQueryBuilder('history')
+          .leftJoinAndSelect('history.user', 'user')
+          .leftJoinAndSelect('history.equipment', 'equipment')
+          .leftJoinAndSelect('history.project', 'project')
+          .where('history.user = :id', { id: filterData.id })
+          .andWhere('history.created_at = :date', {
+            date: filterData.date,
+          })
+          .getMany();
+      }
+    }
   }
 }

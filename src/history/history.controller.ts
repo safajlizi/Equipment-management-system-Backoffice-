@@ -6,12 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  Options,
 } from '@nestjs/common';
 import { HistoryService } from './history.service';
 import { CreateHistoryDto } from './dto/create-history.dto';
 import { UpdateHistoryDto } from './dto/update-history.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Project } from 'src/project/entities/project.entity';
+import { FilterActionTypeDto } from './dto/filter-action_type.dto';
+import { FilterDateDto } from './dto/filter-date.dto';
 
 @Controller('history')
 @ApiTags('History')
@@ -55,5 +58,15 @@ export class HistoryController {
   @Get('equipment/:id')
   getEquipmentHistory(@Param('id') equipmentId: string) {
     return this.historyService.getEquipmentHistory(equipmentId);
+  }
+
+  @Post('/filter/action_type')
+  getFilteredHistoryActionType(@Body() filterData: FilterActionTypeDto) {
+    return this.historyService.filterByActionType(filterData);
+  }
+
+  @Post('/filter/date')
+  getFilteredHistoryCreationDate(@Body() filterData: FilterDateDto) {
+    return this.historyService.filterByCreationDate(filterData);
   }
 }

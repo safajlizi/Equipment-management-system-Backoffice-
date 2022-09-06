@@ -10,13 +10,18 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserRoleEnum } from './entities/user.entity';
 import { MailerService } from '@nestjs-modules/mailer';
 
+export enum UserEquipmentOrder {
+  recent = 'recent',
+  liberation = 'liberation',
+}
+
 import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    private readonly mailerService: MailerService
+    private readonly mailerService: MailerService,
   ) {}
 
   findAll(): Promise<User[]> {
@@ -31,24 +36,23 @@ export class UsersService {
     await this.usersRepository.update(id, { deleted: true });
   }
 
-  public mail(mail:string,username:string,password:string): void {
- this.mailerService
+  public mail(mail: string, username: string, password: string): void {
+    this.mailerService
       .sendMail({
         to: mail,
         from: 'safajlizi199@gmail.com',
         subject: 'Account Information ✔',
         template: 'email',
-      context: {
+        context: {
           password: password,
-          username:username,
-        }
+          username: username,
+        },
       })
       .then(() => {
-        console.log("success")
+        console.log('success');
       })
       .catch((error) => {
-        console.log(error)
-
+        console.log(error);
       });
   }
 
@@ -59,7 +63,7 @@ export class UsersService {
     user.password = await bcrypt.hash(password, user.salt);
 
     //mail
-    this.mail(user.email,user.username,password)
+    this.mail(user.email, user.username, password);
 
     //MAILER SEND EMAIL WITH PASSWORD HERE.
     return await this.usersRepository.save(user);
@@ -100,14 +104,28 @@ export class UsersService {
     else await this.usersRepository.update(id, { username: username });
     return await this.usersRepository.findOneBy({ id: id });
   }
-  async getEquips(id: string) {
-    return await this.usersRepository
-      .createQueryBuilder('users')
-      .leftJoinAndSelect('users.equipment', 'equipment')
-      .leftJoinAndSelect('equipment.project', 'project')
-      .leftJoinAndSelect('project.manager', 'user')
-      .where('users.id = :id', { id: id })
-      .getMany();
+  async getEquips(id: string, order: UserEquipmentOrder) {
+    switch (order) {
+      case UserEquipmentOrder.recent: {
+        return await this.usersRepository
+          .createQueryBuilder('users')
+          .leftJoinAndSelect('users.equipment', 'equipment')
+          .leftJoinAndSelect('equipment.project', 'project')
+          .leftJoinAndSelect('project.manager', 'user')
+          .where('users.id = :id', { id: id })
+          .getMany();
+      }
+      case UserEquipmentOrder.liberation: {
+        return await this.usersRepository
+          .createQueryBuilder('users')
+          .leftJoinAndSelect('users.equipment', 'equipment')
+          .leftJoinAndSelect('equipment.project', 'project')
+          .leftJoinAndSelect('project.manager', 'user')
+          .where('users.id = :id', { id: id })
+          .orderBy('equipment.date_lib', 'ASC')
+          .getMany();
+      }
+    }
   }
   async addEquip(userId: string, equipId: string | string[]) {
     return await this.usersRepository
@@ -148,5 +166,4 @@ export class UsersService {
       where: { role: UserRoleEnum.manager },
     });
   }
-
 }

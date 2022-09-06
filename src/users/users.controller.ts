@@ -8,7 +8,7 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UserEquipmentOrder, UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -63,8 +63,8 @@ export class UsersController {
   }
 
   @Get('equipments/:id')
-  getEquips(@Param('id') id: string) {
-    return this.usersService.getEquips(id);
+  getEquips(@Param('id') id: string, @Body('order') order: UserEquipmentOrder) {
+    return this.usersService.getEquips(id, order);
   }
 
   @Get('projects/managed/:id')

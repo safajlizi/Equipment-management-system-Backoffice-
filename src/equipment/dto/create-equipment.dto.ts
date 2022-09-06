@@ -1,11 +1,12 @@
 import { User } from 'src/users/entities/user.entity';
 import { IsDate, IsBoolean } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   EquipmentPropertyEnum,
   EquipmentStatusEnum,
 } from '../entities/equipment.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Category } from 'src/category/entities/category.entity';
 export class CreateEquipmentDto {
   @ApiProperty()
   manager?: User;
@@ -16,5 +17,6 @@ export class CreateEquipmentDto {
   @ApiProperty()
   description: string;
   @ApiProperty()
-  category: string;
+  @Type(() => Category)
+  category: Category;
 }

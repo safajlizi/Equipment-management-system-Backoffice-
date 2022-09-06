@@ -14,6 +14,7 @@ import {
 import { IsDate } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Project } from 'src/project/entities/project.entity';
+import { Category } from 'src/category/entities/category.entity';
 
 export enum EquipmentStatusEnum {
   availableToAll = 'AVAILABLETOALL',
@@ -46,6 +47,8 @@ export class Equipment {
     cascade: ['update'],
   })
   project: Project;
+  @ManyToOne((type) => Category, (category) => category.equipment)
+  category: Category;
   @Column({ default: EquipmentPropertyEnum.sofia })
   property: EquipmentPropertyEnum;
   @Column({ type: 'date', nullable: true })
@@ -60,8 +63,6 @@ export class Equipment {
   availability: EquipmentStatusEnum;
   @Column({ nullable: true })
   defaults: string;
-  @Column()
-  category: string;
 
   @Column({ type: 'timestamp', nullable: true })
   date_lib: Date;

@@ -7,6 +7,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
+import { Category } from 'src/category/entities/category.entity';
 import { IsNullable } from 'src/decorators/isnull.decorator';
 import {
   EquipmentCalibrationEnum,
@@ -19,7 +20,7 @@ export class UpdateEquipmentDto extends PartialType(CreateEquipmentDto) {
   label?: string;
   property?: EquipmentPropertyEnum;
   defaults?: string;
-  category?: string;
+  category?: Category;
   description?: string;
   conformity?: EquipmentConformityEnum;
   @Type(() => Date)

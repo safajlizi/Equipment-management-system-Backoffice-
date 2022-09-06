@@ -7,6 +7,7 @@ import { EquipmentModule } from './equipment/equipment.module';
 import { UsersModule } from './users/users.module';
 import { HistoryModule } from './history/history.module';
 import { ProjectModule } from './project/project.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ProjectModule } from './project/project.module';
     UsersModule,
     HistoryModule,
     ProjectModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
