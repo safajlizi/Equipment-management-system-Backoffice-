@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  ValidationPipe,
+  UsePipes,
 } from '@nestjs/common';
 import { EquipmentService } from './equipment.service';
 import { CreateEquipmentDto } from './dto/create-equipment.dto';
@@ -80,6 +82,7 @@ export class EquipmentController {
   }
 
   @Post('/project/take')
+  @UsePipes(new ValidationPipe({ transform: true }))
   @ApiOkResponse({ description: 'Equipment affected to project.' })
   @ApiBadRequestResponse({
     description: 'Equipment already in use by other project.',

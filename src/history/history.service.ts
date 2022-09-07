@@ -188,9 +188,14 @@ export class HistoryService {
       .leftJoinAndSelect('history.user', 'user')
       .where('user.id = :id', { id: UserId })
       .andWhere(
-        'user.email like :keyword or user.username like :keyword or user.firstname like :keyword or user.lastname like :keyword or equipment.label like :keyword or equipment.ref like :keyword or project.name like :keyword or history.description like :keyword',
+        'user.email like :keyword or user.username like :keyword or user.firstname like :keyword or user.lastname like :keyword',
         { keyword: `%${keyword}%` },
       )
+      .orWhere('equipment.label like :keyword or equipment.ref like :keyword', {
+        keyword: `%${keyword}%`,
+      })
+      .orWhere('project.name like :keyword', { keyword: `%${keyword}%` })
+      .orWhere('history.description like :keyword', { keyword: `%${keyword}%` })
       .getMany();
   }
 }
