@@ -6,16 +6,20 @@ import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTakeHistoryDto {
-  @ApiProperty()
+  @ApiProperty({
+    description: 'User id concerned by the reservation operation.',
+  })
   @Type(() => User)
   user: User;
-  @ApiProperty()
+  @ApiProperty({ description: 'Id of the equipment getting reserved.' })
   @Type(() => Equipment)
   equipment: Equipment;
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Id of the project to which the equipment will be associated.',
+  })
   @Type(() => Project)
   project: Project;
-  @ApiProperty()
+  @ApiProperty({ default: 'take' })
   action_type?: string = 'take';
   @ApiProperty()
   @IsString()
@@ -24,6 +28,10 @@ export class CreateTakeHistoryDto {
   @ApiProperty()
   @Type(() => Date)
   date_lib?: Date;
-  @ApiProperty()
+  @ApiProperty({
+    description:
+      'If sent equipment is reserved for the future, if not, default value is tha date the request was sent.',
+    default: 'Date of request recieval',
+  })
   date_res?: Date = new Date();
 }

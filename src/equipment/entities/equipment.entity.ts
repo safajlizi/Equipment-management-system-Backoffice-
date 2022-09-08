@@ -67,6 +67,8 @@ export class Equipment {
 
   @Column({ type: 'timestamp', nullable: true })
   date_lib: Date;
+  @Column({ type: 'timestamp', nullable: true })
+  date_res: Date;
   @Column({ nullable: true })
   description: string;
   @Column({ nullable: true })

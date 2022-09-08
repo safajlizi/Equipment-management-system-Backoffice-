@@ -62,7 +62,7 @@ export class UsersController {
     return this.usersService.updateUsername(id, body.username);
   }
 
-  @Get('equipments/:id')
+  @Post('equipments/:id')
   getEquips(@Param('id') id: string, @Body('order') order: UserEquipmentOrder) {
     return this.usersService.getEquips(id, order);
   }
