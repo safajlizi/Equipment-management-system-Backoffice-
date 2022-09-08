@@ -111,19 +111,19 @@ export class EquipmentService {
     );
     console.log(updateReservationHistory.user);
     console.log(equipment.manager.id);
-    if (
+    /*if (
       (updateReservationHistory.user as unknown as string) !=
       equipment.manager.id
     ) {
       throw new UnauthorizedException("C'est pas votre équipment à modifier.");
-    } else {
-      updateReservationHistory.project = equipment.project;
-      this.historyService.createUpdate(updateReservationHistory);
-      this.equipmentsRepository.update(equipment.id, {
-        date_res: updateReservationHistory.date_res,
-        date_lib: updateReservationHistory.date_lib,
-      });
-    }
+    } else {*/
+    updateReservationHistory.project = equipment.project;
+    this.historyService.createUpdate(updateReservationHistory);
+    this.equipmentsRepository.update(equipment.id, {
+      date_res: updateReservationHistory.date_res,
+      date_lib: updateReservationHistory.date_lib,
+    });
+    //}
   }
   async declareEquipFaulty(createFault: CreateFaultyHistoryDto) {
     this.historyService.createFault(createFault);
