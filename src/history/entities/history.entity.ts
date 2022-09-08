@@ -42,7 +42,7 @@ export class History {
   date_res: Date;
   @Column({ nullable: true })
   date_lib: Date;
-  @Column()
+  @Column({ nullable: true })
   description: string;
   @CreateDateColumn({
     type: 'timestamp',
