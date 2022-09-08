@@ -23,8 +23,7 @@ export class CreateTakeHistoryDto {
   action_type?: string = 'take';
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  description: string;
+  description?: string;
   @ApiProperty()
   @Type(() => Date)
   date_lib?: Date;
