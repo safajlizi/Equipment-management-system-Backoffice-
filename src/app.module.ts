@@ -9,6 +9,7 @@ import { HistoryModule } from './history/history.module';
 import { ProjectModule } from './project/project.module';
 import { CategoryModule } from './category/category.module';
 import { PropertyModule } from './property/property.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { PropertyModule } from './property/property.module';
       synchronize: true,
       debug: false,
     }),
+    ScheduleModule.forRoot(),
     EquipmentModule,
     AuthModule,
     UsersModule,

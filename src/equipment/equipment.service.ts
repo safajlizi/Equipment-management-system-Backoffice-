@@ -1,8 +1,10 @@
+import { MailerService } from '@nestjs-modules/mailer';
 import {
   BadRequestException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNotEmpty } from 'class-validator';
 import { CategoryService } from 'src/category/category.service';
@@ -39,6 +41,7 @@ export class EquipmentService {
     private readonly historyService: HistoryService,
     private readonly categoryService: CategoryService,
     private readonly propertyService: PropertyService,
+    private readonly mailerService: MailerService,
     @InjectRepository(EquipmentVisibility)
     private visibilityRepository: Repository<EquipmentVisibility>,
   ) {}
@@ -318,5 +321,27 @@ export class EquipmentService {
   async createVisibility(fieldname: string) {
     let visibility = this.visibilityRepository.create({ field: fieldname });
     return this.visibilityRepository.save(visibility);
+  }
+
+  //CRON
+  @Cron('0 0 * * *')
+  async checkCalibration() {
+    let today = new Date();
+    let equipments = await this.findAll();
+    equipments.forEach((element) => {
+      let manager = element.manager;
+      if (element.validity_date == today) {
+        this.mailerService.sendMail({
+          to: manager.email,
+          from: 'safajlizi199@gmail.com',
+          subject: 'Calibration notification.',
+          template: 'calibration',
+          context: {
+            ref: element.ref,
+            username: manager.username,
+          },
+        });
+      }
+    });
   }
 }
