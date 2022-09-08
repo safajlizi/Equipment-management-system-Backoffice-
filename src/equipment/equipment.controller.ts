@@ -93,6 +93,7 @@ export class EquipmentController {
   }
 
   @Patch('/project/return')
+  @UsePipes(new ValidationPipe({ transform: true }))
   @ApiOkResponse({ description: 'Equipment returned.' })
   @ApiBadRequestResponse({
     description: "Equipment not in project, can't be returned",
@@ -101,10 +102,12 @@ export class EquipmentController {
     return this.equipmentService.returnEquipFromProject(createReturn);
   }
   @Patch('/reservation')
+  @UsePipes(new ValidationPipe({ transform: true }))
   updateReservation(@Body() updateDto: CreateUpdateHistoryDto) {
     return this.equipmentService.updateReservation(updateDto);
   }
   @Post('/faulty')
+  @UsePipes(new ValidationPipe({ transform: true }))
   @ApiOkResponse({ description: 'Equipment fault is declared.' })
   declareFaulty(@Body() createFaulty: CreateFaultyHistoryDto) {
     return this.equipmentService.declareEquipFaulty(createFaulty);
@@ -125,6 +128,7 @@ export class EquipmentController {
     description: "User requesting isn't member of project.",
   })
   @Post('/project/user/take')
+  @UsePipes(new ValidationPipe({ transform: true }))
   affectEquipToProjectUser(@Body() createTakeUser: CreateTakeHistoryDto) {
     return this.equipmentService.affectEquipToUserProject(createTakeUser);
   }
@@ -136,6 +140,7 @@ export class EquipmentController {
     description: "User requesting isn't member of project.",
   })
   @Patch('/project/user/return')
+  @UsePipes(new ValidationPipe({ transform: true }))
   returnEquipFromProjectUser(@Body() createReturnUser: CreateReturnHistoryDto) {
     return this.equipmentService.removeEquipToUserProject(createReturnUser);
   }
