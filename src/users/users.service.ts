@@ -111,6 +111,8 @@ export class UsersService {
           .createQueryBuilder('users')
           .leftJoinAndSelect('users.equipment', 'equipment')
           .leftJoinAndSelect('equipment.project', 'project')
+          .leftJoinAndSelect('equipement.property', 'property')
+          .leftJoinAndSelect('equipement.category', 'category')
           .leftJoinAndSelect('project.manager', 'user')
           .where('users.id = :id', { id: id })
           .getMany();
@@ -120,6 +122,8 @@ export class UsersService {
           .createQueryBuilder('users')
           .leftJoinAndSelect('users.equipment', 'equipment')
           .leftJoinAndSelect('equipment.project', 'project')
+          .leftJoinAndSelect('equipement.property', 'property')
+          .leftJoinAndSelect('equipement.category', 'category')
           .leftJoinAndSelect('project.manager', 'user')
           .where('users.id = :id', { id: id })
           .orderBy('equipment.date_lib', 'ASC')
