@@ -109,6 +109,8 @@ export class EquipmentService {
     let equipment = await this.findOne(
       updateReservationHistory.equipment as unknown as string,
     );
+    console.log(updateReservationHistory.user);
+    console.log(equipment.manager.id);
     if (
       (updateReservationHistory.user as unknown as string) !=
       equipment.manager.id
