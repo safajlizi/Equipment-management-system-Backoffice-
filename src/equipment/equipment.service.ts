@@ -11,6 +11,7 @@ import { CreateHistoryDto } from 'src/history/dto/create-history.dto';
 import { CreateReturnHistoryDto } from 'src/history/dto/create-return-history.dto';
 import { CreateTakeHistoryDto } from 'src/history/dto/create-take-history.dto';
 import { CreateTakesHistoryDto } from 'src/history/dto/create-takes-history.dto';
+import { CreateUpdateHistoryDto } from 'src/history/dto/create-update-history.dto';
 import { HistoryService } from 'src/history/history.service';
 import { Project } from 'src/project/entities/project.entity';
 import { ProjectService } from 'src/project/project.service';
@@ -100,6 +101,24 @@ export class EquipmentService {
     return await this.equipmentsRepository.find({
       where: [{ project: project }],
     });
+  }
+  async updateReservation(updateReservationHistory: CreateUpdateHistoryDto) {
+    let equipment = await this.findOne(
+      updateReservationHistory.equipment as unknown as string,
+    );
+    if (
+      (updateReservationHistory.user as unknown as string) !=
+      equipment.manager.id
+    ) {
+      throw new UnauthorizedException("C'est pas votre équipment à modifier.");
+    } else {
+      updateReservationHistory.project = equipment.project;
+      this.historyService.createUpdate(updateReservationHistory);
+      this.equipmentsRepository.update(equipment.id, {
+        date_res: updateReservationHistory.date_res,
+        date_lib: updateReservationHistory.date_lib,
+      });
+    }
   }
   async declareEquipFaulty(createFault: CreateFaultyHistoryDto) {
     this.historyService.createFault(createFault);

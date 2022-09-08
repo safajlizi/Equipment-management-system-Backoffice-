@@ -30,6 +30,10 @@ export class HistoryService {
     let history = this.historyRepository.create(returnDto);
     return await this.historyRepository.save(history);
   }
+  async createUpdate(updateDto: UpdateHistoryDto) {
+    let history = this.historyRepository.create(updateDto);
+    return await this.historyRepository.save(history);
+  }
   async createTake(takeDto: CreateTakeHistoryDto) {
     let history = this.historyRepository.create(takeDto);
     return await this.historyRepository.save(history);
@@ -195,7 +199,6 @@ export class HistoryService {
         keyword: `%${keyword}%`,
       })
       .orWhere('project.name like :keyword', { keyword: `%${keyword}%` })
-      .orWhere('history.description like :keyword', { keyword: `%${keyword}%` })
       .getMany();
   }
 }

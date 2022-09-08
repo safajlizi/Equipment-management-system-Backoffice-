@@ -24,6 +24,7 @@ import { CreateReturnHistoryDto } from 'src/history/dto/create-return-history.dt
 import { CreateFaultyHistoryDto } from 'src/history/dto/create-faulty-history.dto';
 import { Equipment } from './entities/equipment.entity';
 import { VisibiltyUpdateDto } from './dto/visibility-update.dto';
+import { CreateUpdateHistoryDto } from 'src/history/dto/create-update-history.dto';
 
 @Controller('equipment')
 @ApiTags('Equipment')
@@ -99,7 +100,10 @@ export class EquipmentController {
   returnEquipFromProject(@Body() createReturn: CreateReturnHistoryDto) {
     return this.equipmentService.returnEquipFromProject(createReturn);
   }
-
+  @Patch('/reservation')
+  updateReservation(@Body() updateDto: CreateUpdateHistoryDto) {
+    return this.equipmentService.updateReservation(updateDto);
+  }
   @Post('/faulty')
   @ApiOkResponse({ description: 'Equipment fault is declared.' })
   declareFaulty(@Body() createFaulty: CreateFaultyHistoryDto) {
