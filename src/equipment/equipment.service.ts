@@ -84,7 +84,6 @@ export class EquipmentService {
     keys.map((key) => {
       !updateEquipmentDto[key] && delete updateEquipmentDto[key];
     });
-    console.log(updateEquipmentDto);
     return await this.equipmentsRepository.update(id, updateEquipmentDto);
   }
 
@@ -101,16 +100,18 @@ export class EquipmentService {
   }
 
   async getEquipmentOfProject(project: Project) {
-    return await this.equipmentsRepository.find({
-      where: [{ project: project }],
-    });
+    return await this.equipmentsRepository
+      .createQueryBuilder('equipment')
+      .leftJoinAndSelect('equipment.project', 'project')
+      .where('project.id = :id', { id: project.id })
+      .leftJoinAndSelect('equipment.category', 'category')
+      .leftJoinAndSelect('equipment.property', 'property')
+      .getMany();
   }
   async updateReservation(updateReservationHistory: CreateUpdateHistoryDto) {
     let equipment = await this.findOne(
       updateReservationHistory.equipment as unknown as string,
     );
-    console.log(updateReservationHistory.user);
-    console.log(equipment.manager.id);
     if (
       (updateReservationHistory.user as unknown as string) !=
       equipment.manager.id
@@ -283,6 +284,8 @@ export class EquipmentService {
       .select()
       .where('equip.projectId=:id', { id: id })
       .leftJoinAndSelect('equip.manager', 'user')
+      .leftJoinAndSelect('equip.category', 'category')
+      .leftJoinAndSelect('equip.property', 'property')
       .getMany();
   }
   async getMeasurementsEquipement() {

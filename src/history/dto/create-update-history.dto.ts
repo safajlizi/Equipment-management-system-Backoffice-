@@ -22,8 +22,6 @@ export class CreateUpdateHistoryDto {
   @ApiProperty()
   action_type?: string = 'update';
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
   description?: string;
   @ApiProperty()
   @Type(() => Date)

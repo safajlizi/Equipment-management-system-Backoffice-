@@ -100,7 +100,7 @@ export class EquipmentController {
   returnEquipFromProject(@Body() createReturn: CreateReturnHistoryDto) {
     return this.equipmentService.returnEquipFromProject(createReturn);
   }
-  @Patch('/reservation')
+  @Patch('/reservation/create')
   updateReservation(@Body() updateDto: CreateUpdateHistoryDto) {
     return this.equipmentService.updateReservation(updateDto);
   }
